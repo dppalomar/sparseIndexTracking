@@ -4,3 +4,4 @@
 ^README-.*\.png$
 ^R_buildignore$
 ^papers$
+^cran-comments.md$

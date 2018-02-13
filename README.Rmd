@@ -1,5 +1,4 @@
 ---
-title: "sparseEigen"
 output:
   md_document:
     variant: markdown_github
@@ -18,20 +17,42 @@ knitr::opts_chunk$set(
 )
 ```
 
+# sparseIndexTracking
 
-This package provides functions to compute sparse eigenvectors (while keeping their orthogonality) or sparse PCA from either the covariance matrix or directly the data matrix.
+Computation of sparse eigenvectors of a matrix (aka sparse PCA)
+    with running time 2-3 orders of magnitude lower than existing methods and
+    better final performance in terms of recovery of sparsity pattern and 
+    estimation of numerical values. 
+    
+Can handle covariance matrices as well as 
+    data matrices with real or complex-valued entries. Different levels of 
+    sparsity can be specified for each individual ordered eigenvector and the 
+    method is robust in parameter selection. See vignette for a detailed 
+    documentation and comparison, with several illustrative examples. 
+    
+The package is based on the paper:
+    K. Benidis, Y. Feng, and D. P. Palomar, “Sparse Portfolios for High-Dimensional 
+    Financial Index Tracking,” IEEE Trans. on Signal Processing, vol. 66, no. 1, 
+    pp. 155-170, Jan. 2018 <https://doi.org/10.1109/TSP.2017.2762286>.
 
 
 ## Installation
 ```{r, eval = FALSE}
+# Installation from CRAN
+install.packages("sparseIndexTracking")
+
 # Installation from GitHub
 # install.packages("devtools")
-devtools::install_github("dppalomar/sparseEigen")
+devtools::install_github("dppalomar/sparseIndexTracking")
 
-# Get help
-library(sparseEigen)
-help(package="sparseEigen")
-?spEigen
+# Getting help
+library(sparseIndexTracking)
+help(package = "sparseIndexTracking")
+package?sparseIndexTracking
+?XXXXXX
+
+# Citing this work
+citation("sparseIndexTracking")
 ```
 
 
@@ -47,7 +68,6 @@ m <- 500  # dimension
 n <- 100  # number of samples
 q <- 3  # number of sparse eigenvectors to be estimated
 sp_card <- 0.1*m  # cardinality of each sparse eigenvector
-rho <- 0.5  # sparsity level
 
 # generate non-overlapping sparse eigenvectors
 V <- matrix(0, m, q)
@@ -70,7 +90,7 @@ Then, we estimate the covariance matrix with `cov(X)` and compute its sparse eig
 ```{r}
 # computation of sparse eigenvectors
 res_standard <- eigen(cov(X))
-res_sparse <- spEigen(cov(X), q, rho)
+res_sparse <- spEigen(cov(X), q)
 ```
 
 We can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors (the closer to 1 the better):
@@ -116,7 +136,7 @@ X <- MASS::mvrnorm(n, rep(0, m), R)  # random data with underlying sparse struct
 Then, we compute the covariance matrix through the joint estimation of sparse eigenvectors and eigenvalues:
 ```{r}
 # computation of covariance matrix
-res_sparse2 <- spEigenCov(cov(X), q, rho)
+res_sparse2 <- spEigenCov(cov(X), q)
 ```
 
 Again, we can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors:
