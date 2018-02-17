@@ -1,0 +1,37 @@
+citHeader("To cite 'sparseIndexTracking' in publications, please use:")
+
+citEntry(entry = "Article",
+         title        = "Sparse Portfolios for High-Dimensional
+    Financial Index Tracking",
+         author       = personList(as.person("K. Benidis"),
+                                   as.person("Y. Feng"),
+                                   as.person("D. P. Palomar")),
+         journal      = "IEEE Transactions on Signal Processing",
+         volume       = "66",
+         number       = "1",
+         pages        = "155--170",
+         year         = "2018",
+         url          = "http://www.danielppalomar.com/publications.html",
+
+         textVersion  =
+           paste("K. Benidis, Y. Feng, and D. P. Palomar,",
+                 "\"Sparse Portfolios for High-Dimensional
+    Financial Index Tracking,\"",
+                 "IEEE Transactions on Signal Processing,",
+                 "vol. 66, no. 1, pp. 155-170, Jan. 2018.")
+)
+
+citEntry(entry = "Manual",
+         title        = "sparseIndexTracking: Design of Portfolio of Stocks to Tracks an Index",
+         author       = personList(as.person("K. Benidis"),
+                                   as.person("D. P. Palomar")),
+         note         = "R package version 0.1.0",
+         year         = "2018",
+         url          = "https://CRAN.R-project.org/package=sparseIndexTracking",
+
+         textVersion  =
+           paste("K. Benidis and D. P. Palomar (2018).",
+                 "sparseIndexTracking: Design of Portfolio of Stocks to Tracks an Index.",
+                 "R package version 0.1.0.",
+                 "https://CRAN.R-project.org/package=sparseIndexTracking")
+)
