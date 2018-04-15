@@ -1,8 +1,5 @@
 ---
-<<<<<<< HEAD
 title: "sparseIndexTracking"
-=======
->>>>>>> 3ba2082c266bd425bb8efe97af1f23395bc44b2d
 output:
   md_document:
     variant: markdown_github

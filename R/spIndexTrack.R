@@ -349,7 +349,8 @@ drHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
 
   tmp <- r - X %*% w
   alpha <- rep(1, m)
-  alpha[abs(tmp) > hub] <- hub / abs(tmp[abs(tmp) > hub])
+  alpha[tmp > hub] <- hub / tmp[tmp > hub]
+  alpha[tmp < 0] <- hub / (hub - 2*tmp[tmp < 0])
 
   q <- -pmax(X %*% w - r, 0)
 
