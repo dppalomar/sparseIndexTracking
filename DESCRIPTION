@@ -15,7 +15,7 @@ Description: [Benidis, write the description. I already updated the ref and ever
     Financial Index Tracking,” IEEE Trans. on Signal Processing, vol. 66, no. 1, 
     pp. 155-170, Jan. 2018 <doi:10.1109/TSP.2017.2762286>.
 Authors@R: c(
-  person("Konstantinos", "Benidis", role = c("cre", "aut"), email = "benidisk@gmail.com"),
+  person("Konstantinos", "Benidis", role = "aut", email = "benidisk@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
   )
 Maintainer: Daniel P. Palomar <daniel.p.palomar@gmail.com>
