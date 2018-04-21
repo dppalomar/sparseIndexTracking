@@ -1,5 +1,5 @@
 Package: sparseIndexTracking
-Title: Design of Portfolio of Stocks to Tracks an Index
+Title: Design of Portfolio of Stocks to Track an Index
 Version: 0.1.0
 Description: [Benidis, write the description. I already updated the ref and everything else] 
     Computation of sparse eigenvectors of a matrix (aka sparse PCA)
