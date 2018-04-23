@@ -3,10 +3,6 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '2'
   pdf_document:
     fig_caption: yes
     keep_tex: yes
@@ -18,14 +14,17 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-graphics: yes
 header-includes: \setlength{\parindent}{12pt} 
                  \usepackage{graphicx} 
                  \usepackage{bm}
+graphics: yes
 csl: ieee.csl
 bibliography: refs.bib
-vignette: "%\\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}\n%\\VignetteKeyword{sparse,
-  portfolio, financial index}\n%\\VignetteEncoding{UTF-8} \n%\\VignetteEngine{knitr::rmarkdown}\n"
+vignette: |
+  %\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}
+  %\VignetteKeyword{sparse, portfolio, financial index}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r, echo = FALSE}
@@ -34,10 +33,10 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center"
 )
-#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "all")
-#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "pdf_document")
-#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "rmarkdown::html_vignette")
-#tools::compactPDF("vignettes/SparseEigenvectors.pdf", gs_quality = "ebook")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "rmarkdown::html_vignette")
+#tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
 ```
 
 -----------

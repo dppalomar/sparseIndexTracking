@@ -1,0 +1,81 @@
+---
+title: "Design of Portfolio of Stocks to Track an Index"
+author: "Konstantinos Benidis and Daniel P. Palomar"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+header-includes: \setlength{\parindent}{12pt} 
+                 \usepackage{graphicx} 
+                 \usepackage{bm}
+graphics: yes
+csl: ieee.csl
+bibliography: refs.bib
+vignette: |
+  %\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}
+  %\VignetteKeyword{sparse, portfolio, financial index}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center"
+)
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "rmarkdown::html_vignette")
+#tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
+```
+
+-----------
+This vignette illustrates the design of sparse portfolios that aim to track a financila index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
+
+
+# Comparison with other packages
+
+
+# Usage of the package
+
+
+# Explanation of the algorithms
+
+## `spIndexTrack()`: Sparse portfolio construction
+
+Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T$ and $\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}$ the (arithmetic) net returns of the index and the $N$ assets in the past $T$ days, respectively, with $\mathbf{r}_t\in\mathbb{R}^N$ denoting the net returns of the $N$ assets at the $t$-th day.
+
+The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
+    $$\begin{aligned}
+		&\underset{\mathbf{\xi}}{\text{minimize}}\quad \sum_{i=1}^{m}\left(\log\xi_i+\alpha_i^{(k)}\xi_i+\lambda_{\max}^{(\mathbf{S})}\frac{1}{\xi_i}\right)\\
+		&\!\begin{array}{lll}
+		\text{subject to} & \xi_{i}\geq \xi_{i+1}, & i=1,\dots, q-1,\\
+		 & \xi_{q}\geq \xi_{q+i}, & i=1,\dots,m-q,
+		\end{array}
+	\end{aligned}$$
+	
+$$
+\begin{aligned}
+    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
+    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{aligned}
+$$ 
+
+
+
+# References {-}
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\noindent
