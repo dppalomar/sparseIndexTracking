@@ -3,17 +3,12 @@
 \docType{package}
 \name{sparseIndexTracking-package}
 \alias{sparseIndexTracking-package}
-\title{sparseIndexTracking: Design of Portfolio of Stocks to Tracks an Index}
+\title{sparseIndexTracking: Design of Portfolio of Stocks to Track an Index}
 \description{
-[To be updated]
-Computation of sparse eigenvectors of a matrix (aka sparse PCA)
-with running time 2-3 orders of magnitude lower than existing methods and
-better final performance in terms of recovery of sparsity pattern and
-estimation of numerical values. Can handle covariance matrices as well as
-data matrices with real or complex-valued entries. Different levels of
-sparsity can be specified for each individual ordered eigenvector and the
-method is robust in parameter selection. See vignette for a detailed
-documentation and comparison, with several illustrative examples.
+Computation of sparse portfolios for financial index tracking, i.e., joint selection of a subset of theassets that compose the index
+and computation of their relative weights (capital allocation). The level of sparsity of the portfolios, i.e., the number of selected assets,
+is controlled through a regularization parameter. Different tracking measures are available, namely the empirical tracking error (ETE), downside risk (DR),
+Huber empirical tracking error (HETE), and Huber downside risk (HDR). See vignette for a detailed documentation and comparison, with several illustrative examples.
 }
 \section{Functions}{
 

@@ -27,7 +27,7 @@ r_b <- X %*% w_ind
 
 # algorithm
 lambda <- 5e-7
-w <- spIndexTrack(X, r_b, lambda, u = 0.5, measure = 'dr')
+w <- spIndexTrack(X, r_b, lambda, u = 0.5, measure = 'ete')
 
 sum(w > 1e-6)
 

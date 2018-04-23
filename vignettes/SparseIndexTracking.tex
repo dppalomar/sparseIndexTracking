@@ -1,0 +1,252 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Design of Portfolio of Stocks to Track an Index},
+            pdfauthor={Konstantinos Benidis and Daniel P. Palomar},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Design of Portfolio of Stocks to Track an Index}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Konstantinos Benidis and Daniel P. Palomar}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{2018-04-23}
+
+\setlength{\parindent}{12pt} \usepackage{graphicx}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+This vignette illustrates the design of sparse portfolios that aim to
+track a financila index with the package \texttt{sparseIndexTracking}
+(with a comparison with other packages) and gives a description of the
+algorithms used.
+
+\section{Comparison with other
+packages}\label{comparison-with-other-packages}
+
+\section{Usage of the package}\label{usage-of-the-package}
+
+\section{Explanation of the
+algorithms}\label{explanation-of-the-algorithms}
+
+\subsection{\texorpdfstring{\texttt{spIndexTrack()}: Sparse portfolio
+construction}{spIndexTrack(): Sparse portfolio construction}}\label{spindextrack-sparse-portfolio-construction}
+
+Assume that an index is composed of \(N\) assets. We denote by
+\(\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T\) and
+\(\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}\)
+the (arithmetic) net returns of the index and the \(N\) assets in the
+past \(T\) days, respectively, with \(\mathbf{r}_t\in\mathbb{R}^N\)
+denoting the net returns of the \(N\) assets at the \(t\)-th day.
+
+The goal of \texttt{spIndexTrack()} is the design of a (sparse)
+portfolio \(\mathbf{w}\in\mathbb{R}_+^N\), with
+\(\mathbf{w}^\top\mathbf{1} = 1\), that tracks closely the index, i.e.,
+\(\mathbf{X}\mathbf{w} \approx \mathbf{r}^b\), based on {[}1{]}. The
+underlying optimization problem that is solved is \[
+\begin{aligned}\label{opt:joint_index_tracking}
+    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
+    &\hspace{21mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{aligned}
+\] where \(\mathbf{U}\in\mathbb{R}^{m\times q}\) is a matrix containing
+the \(q\) leading eigenvectors, \(\mathbf{d}\) is a vector of weights to
+ensure that \(\mathbf{U}\) contains the leading eigenvectors without an
+arbitrary rotation, and the \(\rho_i\)'s are the regularization
+parameters to control how much sparsity is desired. This problem is the
+typical PCA formulation with an extra penalty term in the objective that
+penalizes the cardinality of the eigenvectors, controled by the
+regularization parameters \(\rho_i\)'s.
+
+The \(\ell_0\)-``norm'' is approximated by the continuous and
+differentiable function \[g_p^{\epsilon}\left(x \right)= \begin{cases}
+    \frac{x^2}{2\epsilon(p+\epsilon)\log(1+1/p)},& |x|\leq\epsilon,\\
+    \frac{\log\left(\frac{p+|x|}{p+\epsilon}\right)+\frac{\epsilon}{2(p+\epsilon)}}{\log(1+1/p)},& |x|>\epsilon,
+    \end{cases}\] where \(p>0\) and \(0<\epsilon\ll1\) are parameters
+that control the approximation. This leads to the following approximate
+problem: \[\begin{aligned}
+      &\underset{\mathbf{U}}{\text{maximize}}\quad \text{Tr} \left(\mathbf{U}^\top \mathbf{S} \mathbf{U} \text{Diag}   (\mathbf{d})\right) - \sum_{j=1}^{q}\rho_j\sum_{i=1}^{m}g_p^{\epsilon}\left(u_{ij}\right)\\
+    &\text{subject to}\quad \mathbf{U}^\top\mathbf{U}=\mathbf{I}_q.
+  \end{aligned}\]
+
+This problem can be solved via Majorization-Minimization (MM) {[}2{]}
+with an iterative closed-form update algorithm. For this, at each
+iteration (denoted by \(k\)) two key quantities are needed:
+
+\[\mathbf{G}^{(k)} = \mathbf{S}\mathbf{U}^{(k)}\text{Diag}(\mathbf{d})\]\\
+\[\mathbf{H}^{(k)}=\left[\text{diag}\left(\mathbf{w}^{(k)}-\mathbf{w}_{\max}^{(k)}\otimes\mathbf{1}_{m}\right)\mathbf{\tilde{u}}^{(k)}\right]_{m\times q},\]
+where \[w_{i}^{(k)}= \begin{cases}
+        \frac{\rho_i}{2\epsilon(p+\epsilon)\log(1+1/p)},& |\tilde{u}^{(k)}_{i}|\leq\epsilon,\\
+        \frac{\rho_i}{2\log(1+1/p)|\tilde{u}^{(k)}_{i}|\left(|\tilde{u}^{(k)}_{i}|+p\right)},&                |\tilde{u}^{(k)}_{i}|>\epsilon,
+        \end{cases}\] with \(\mathbf{w}\in\mathbb{R}_+^{mq}\),
+\(\mathbf{\tilde{u}}^{(k)} = \text{vec}(\mathbf{U}^{(k)})\in\mathbb{R}_+^{mq}\),
+\(\mathbf{w}_{\max}\in\mathbb{R}^q_+\), with \(w_{\max,i}\) being the
+maximum weight that corresponds to the \(i\)-th eigenvector
+\(\mathbf{u}^{(k)}_{i}\).
+
+The iterative closed-form update algorithm is:
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Set \(k=0\) and choose an initial point \(\mathbf{U}^{(0)}\)\\
+\item
+  Compute \(\mathbf{G}^{(k)}\) and \(\mathbf{H}^{(k)}\)\\
+\item
+  Compute \(\mathbf{V}_{\text{L}}\), \(\mathbf{V}_{\text{R}}\) as the
+  left and right singular vectors of
+  \(\left(\mathbf{G}^{(k)} - \mathbf{H}^{(k)}\right)\)\\
+\item
+  \(\mathbf{U}^{(k+1)} \gets \mathbf{V}_{\text{L}}\mathbf{V}_{\text{R}}^\top\)\\
+\item
+  \(k \gets k+1\)\\
+\item
+  Repeat steps 2-5 until convergence\\
+\item
+  Return \(\mathbf{U}^{(k)}\)
+\end{enumerate}
+\end{quote}
+
+The initial point of the algorithm \(\mathbf{U}^{(0)}\) is set by
+default to the \(q\) leading standard eigenvectors, unless the user
+specifies otherwise. Internally, all the computations of
+\(\mathbf{G}^{(k)}\) and \(\mathbf{H}^{(k)}\) are done through the
+eigenvalue decomposition (EVD) of \(\mathbf{S}\). Since we can also
+retrieve the eigenvectors and eigenvalues of \(\mathbf{S}\) through the
+singular value decomposition (SVD) of the data matrix \(\mathbf{X}\),
+with \(\mathbf{S} = \frac{1}{n-1}\mathbf{X}^\top\mathbf{X}\), it becomes
+possible to use as an input to \texttt{spEigen()} either the covariance
+matrix \(\mathbf{S}\) or directly the data matrix \(\mathbf{X}\).
+
+Although \(\mathbf{H}^{(k)}\) does not depend directly on
+\(\mathbf{S}\), the parameters \(\rho_j\) are set based on its
+eigenvalues. In particular, each \(\rho_j\) takes a value in an interval
+\([0, \rho_j^{\text{max}}]\) based on the input variable
+\(\rho\in[0, 1]\) that the user selects, i.e.,
+\(\rho_j = \rho\rho_j^{\text{max}}\). The uppperbound
+\(\rho_j^{\text{max}}\) depends, among others, on the eigenvalues of
+\(\mathbf{S}\). Note that the theoretical upperbound is derived based on
+the initial problem and not the approximate. Therefore, although a
+suggested range for \(\rho\) is the interval \([0, 1]\), any nonnegative
+value is accepted by the algorithm.
+
+Finally, note that the approximate problem is controlled by the
+parameters \(p, \epsilon\), and in particular, as \(p\rightarrow0\) we
+get \(\rho_p\rightarrow\ell_0\). However, by setting small values to
+\(p, \epsilon\), it is likely that the algorithm will get stuck to a
+local minimum. To solve this issue we start with large values for
+\(p, \epsilon\), i.e., a ``loose'' approximation, and solve the
+corresponding optimization problem. Then, we sequentially decrease
+\(p, \epsilon\), i.e., we ``tighten'' the approximation, and solve the
+problem again using the previous solution as an initial point. In
+practice we are interested only in the last, ``tightest'' problem. For
+each problem that is solved (i.e., for fixed \(p, \epsilon\)) we utilize
+an acceleration scheme that increases the convergence speed of the MM
+algorithm. For details, please refer to {[}3{]}.
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\setlength{\parindent}{-0.2in} \setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt} \noindent
+
+\hypertarget{refs}{}
+\hypertarget{ref-BenFengPal2018}{}
+{[}1{]} K. Benidis, Y. Feng, and D. P. Palomar, ``Sparse portfolios for
+high-dimensional financial index tracking,'' \emph{IEEE Transactions on
+Signal Processing}, vol. 66, no. 1, pp. 155--170, Jan. 2018.
+
+\hypertarget{ref-SunBabPal2018}{}
+{[}2{]} Y. Sun, P. Babu, and D. P. Palomar, ``Majorization-minimization
+algorithms in signal processing, communications, and machine learning,''
+\emph{IEEE Transactions on Signal Processing}, vol. 65, no. 3, pp.
+794--816, Feb. 2017.
+
+\hypertarget{ref-Varadhan2008}{}
+{[}3{]} R. Varadhan and C. Roland, ``Simple and globally convergent
+methods for accelerating the convergence of any em algorithm,''
+\emph{Scandinavian Journal of Statistics}, vol. 35, no. 2, pp. 335--353,
+2008.
+
+
+\end{document}

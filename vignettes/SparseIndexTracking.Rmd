@@ -1,65 +1,196 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Design of Portfolio of Stocks to Track an Index"
+author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
+graphics: yes
+header-includes: \setlength{\parindent}{12pt} 
+                 \usepackage{graphicx} 
+                 \usepackage{bm}
+csl: ieee.csl
+bibliography: refs.bib
+vignette: "%\\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}\n%\\VignetteKeyword{sparse,
+  portfolio, financial index}\n%\\VignetteEncoding{UTF-8} \n%\\VignetteEngine{knitr::rmarkdown}\n"
 ---
 
-```{r setup, include = FALSE}
+```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
+#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "all")
+#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/SparseEigenvectors.Rmd", "rmarkdown::html_vignette")
+#tools::compactPDF("vignettes/SparseEigenvectors.pdf", gs_quality = "ebook")
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+-----------
+This vignette illustrates the design of sparse portfolios that aim to track a financila index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
 
-## Vignette Info
+# Comparison with other packages
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
 
-## Styles
+# Usage of the package
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+# Explanation of the algorithms
 
-## Figures
+## `spIndexTrack()`: Sparse portfolio construction
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T$ and $\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}$ the (arithmetic) net returns of the index and the $N$ assets in the past $T$ days, respectively, with $\mathbf{r}_t\in\mathbb{R}^N$ denoting the net returns of the $N$ assets at the $t$-th day.
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
+The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
+$$\begin{equation}
+\begin{aligned}\label{opt:joint_index_tracking}
+    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
+    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{aligned}
+\end{equation}$$ 
+where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. 
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+The $\ell_0$-"norm" is approximated by the continuous and differentiable function (for $\mathbf{w} \geq \mathbf{0}$)
+$$
+\begin{equation}\label{eq:approx_func_u}
+\rho_{p,u}(w) = \frac{\log(1 + w/p)}{\log(1 + u/p)},
+\end{equation} 
+$$
+where $p>0$ is a parameter that controls the approximation. This leads to the following approximate problem:
+$$\begin{equation}
+\begin{aligned}\label{opt:joint_index_tracking_approx}
+    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\bm{\rho}_{p,u}(\mathbf{w})\\
+    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
+    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{aligned}
+\end{equation}$$ 
+where $\bm{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+There are four available tracking errors $\text{TE}(\mathbf{w}$) in `spIndexTrack()`:
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+* Empirical tracking error (ETE):
 
-## More Examples
+$$\begin{equation}\label{eq:ETE}
+\text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2
+\end{equation} $$
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+* Downside risk (DR):
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
+$$\begin{equation}\label{eq:DR}
+\text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2
+\end{equation}$$     
 
-Also a quote using `>`:
+* Huber empirical tracking error (HETE):
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+$$\begin{equation}
+\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right),\label{eq:huber-ETE}
+\end{equation}$$ 
+
+* Huber downside risk (HDR):
+
+$$\begin{equation}
+\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right),\label{eq:huber-DR}
+\end{equation}$$ 
+where $\bm{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
+$$\begin{equation}\label{eq:Huber}
+\phi(x) = \begin{cases}
+x^2, &\quad |x| \leq M,\\
+M(2|x| - M), &\quad |x| > M,
+\end{cases}
+\end{equation}$$
+with $M>0$ being the Huber parameter.
+
+
+Regardless of the selected tracking error measure this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm. It can be shown that all of the above variations boil down to the optimization of the following convex problem:
+$$\begin{equation}
+\begin{aligned}\label{opt:general_form}
+&\underset{\mathbf{w}}{\text{minimize}}\quad \mathbf{w}^\top\mathbf{w} + \mathbf{q}^\top\mathbf{w}\\
+&\text{subject to}\quad \mathbf{w}\in\mathcal{W}_{u},
+\end{aligned}
+\end{equation}$$
+where 
+$$\begin{equation}\label{eq:Wu}
+\mathcal{W}_{u} = \big\{\mathbf{w} \big| \mathbf{w}^\top\mathbf{1} = 1, \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1}\big\},
+\end{equation}$$
+and $\mathbf{q}\in\mathbb{R}^N$. 
+
+ADD TABLE WITH THE DIFFERENT $\mathbf{q}$ FOR EACH TE.
+
+HOW CAN WE ADD PROPOSITIONS?
+
+The following propositions provide a waterfilling structured solution of \eqref{opt:general_form}, considering two special cases, namely, $u=1$ and $u<1$.
+
+$$
+\begin{proposition}\label{prop:closedform}
+	The optimal solution of the optimization problem \eqref{opt:general_form} with $u=1$ is
+	\begin{equation}
+	\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,
+	\end{equation}
+	with
+	\begin{equation}
+	\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},
+	\end{equation}
+	and
+	\begin{equation}
+	\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},
+	\end{equation}
+	where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. 
+\end{proposition}$$
+We refer to the iterative procedure of Proposition \ref{prop:closedform} as AS$_{1}(\mathbf{w})$ (Active-Set for $u=1$).
+
+$$
+\begin{proposition}\label{prop:closedform_u}
+	The optimal solution of the optimization problem \eqref{opt:general_form} with $u<1$ is
+	\begin{equation}
+	\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,
+	\end{equation}
+	with 
+	\begin{equation}\label{eq:mu_u}
+	\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},
+	\end{equation}
+	and
+	\begin{align}
+	\mathcal{B}_1 =& \big\{j \big| \mu + q_j \leq -2u\big\},\\
+	\mathcal{B}_2 =& \big\{j \big| -2u < \mu + q_j < 0\big\},
+	\end{align}
+	where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps.
+\end{proposition}$$
+We refer to the iterative procedure of Proposition \ref{prop:closedform_u} as AS$_u(\vq)$ (Active-Set for general $u<1$).
+
+
+The iterative closed-form update algorithm is:  
+
+> 1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$  
+2. Compute $\mathbf{q}$ according to the selected tracking error  
+3. Find the optimal solution $\mathbf{w}^\star$ with AS$_{1|u}(\mathbf{q})$ and set it equal to $\mathbf{w}^{(k+1)}$
+4. $k \gets k+1$  
+6. Repeat steps 2-4 until convergence  
+7. Return $\mathbf{w}^{(k)}$  
+
+The initial point of the algorithm $\mathbf{U}^{(0)}$ is set by default to the $q$ leading standard eigenvectors, unless the user specifies otherwise. Internally, all the computations of $\mathbf{G}^{(k)}$ and $\mathbf{H}^{(k)}$ are done through the eigenvalue decomposition (EVD) of $\mathbf{S}$. Since we can also retrieve the eigenvectors and eigenvalues of $\mathbf{S}$ through the singular value decomposition (SVD) of the data matrix $\mathbf{X}$, with $\mathbf{S} = \frac{1}{n-1}\mathbf{X}^\top\mathbf{X}$, it becomes possible to use as an input to `spEigen()` either the covariance matrix $\mathbf{S}$ or directly the data matrix $\mathbf{X}$.  
+  
+Finally, note that the approximate problem is controlled by the parameter $p$, and in particular, as $p\rightarrow0$ we get  $\rho_{p,u}\rightarrow\ell_0$. However, by setting small values to $p$, it is likely that the algorithm will get stuck to a local minimum. To solve this issue we start with large values for $p$, i.e., a "loose" approximation, and solve the corresponding optimization problem. Then, we sequentially decrease $p$, i.e., we "tighten" the approximation, and solve the problem again using the previous solution as an initial point. In practice we are interested only in the last, "tightest" problem. For each problem that is solved (i.e., for fixed $p$) we utilize an acceleration scheme that increases the convergence speed of the MM algorithm. For details, please refer to [@Varadhan2008].   
+
+
+
+# References {-}
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\noindent

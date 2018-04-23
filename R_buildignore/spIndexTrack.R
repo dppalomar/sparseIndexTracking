@@ -1,4 +1,4 @@
-spIndexTrack <- function(X, r, lambda, u = 0.5, measure = 'ete', hub = NULL, w0 = NULL, thres = 1e-9) {
+spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = NULL, thres = 1e-9) {
   max_iter <- 1000 # maximum MM iterations
 
   ######## error control  #########
@@ -7,8 +7,8 @@ spIndexTrack <- function(X, r, lambda, u = 0.5, measure = 'ete', hub = NULL, w0 
   m <- nrow(X)
   if (n == 1) stop("Data is univariate!")
   if (anyNA(X) || anyNA(r) || anyNA(lambda) || anyNA(u)) stop("This function cannot handle NAs.")
-  if ((measure != 'ete') && (measure != 'dr')) stop("The input argument 'measure' should be either 'ete' or 'dr'.")
-  if ((is.numeric(hub)) && ((length(hub) > 1) || (hub < 0))) stop("The input argument 'hub' should be either NULL or a nonnegative number.")
+  if ((measure != 'ete') && (measure != 'dr') && (measure != 'hete') && (measure != 'hdr')) stop("The input argument 'measure' should be 'ete', 'dr', 'hete', or 'dr'.")
+  if (((measure == 'hete') || (measure == 'hdr')) && ((is.null(hub)) || (hub <= 0))) stop("The input argument 'hub' should be positive.")
   if (u <= 0) stop("The input argument 'u' should be positive.")
   #################################
 
@@ -32,172 +32,153 @@ spIndexTrack <- function(X, r, lambda, u = 0.5, measure = 'ete', hub = NULL, w0 
   tol <- pmin(pp/10, 1e-3)  # tolerance for convergence
 
   k <- 0  # MM iteration counter
-  k_ <- 1
 
-  ######################### L2 PENALTY #########################
-  if (is.null(hub)) {
+  ######################### MM LOOP FOR ETE #########################
+  if (measure == 'ete') {
+
     A <- 1/m * t(X) %*% X
     Lmax_A <- eigen(A, symmetric = TRUE, only.values = TRUE)$values[1]
 
     B <- 2/Lmax_A * (A - Lmax_A*diag(rep(1, n)))
     b <- -2/m * t(X) %*% r
 
-    ######################### MM LOOP FOR ETE #########################
-    if (measure == 'ete') {
+    for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
+      p <- pp[ee]
+      c1 <- log(1 + u/p)
+      flg <- 1
 
-      for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
-        p <- pp[ee]
-        c1 <- log(1 + u/p)
-        flg <- 1
+      while (1) {
+        k <- k + 1
 
+        # Acceleration double step
+        w1 <- eteMMupdate(w0, B, b, Lmax_A, lambda, p, c1, u)
+        w2 <- eteMMupdate(w1, B, b, Lmax_A, lambda, p, c1, u)
+        R <- w1 - w0
+        U <- w2 - w1 - R
+        a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
+
+        # backtracking loop to ensure feasibility
         while (1) {
-          k <- k + 1
-
-          # Acceleration double step
-          w1 <- eteMMupdate(w0, B, b, Lmax_A, lambda, p, c1, u)
-          w2 <- eteMMupdate(w1, B, b, Lmax_A, lambda, p, c1, u)
-          R <- w1 - w0
-          U <- w2 - w1 - R
-          a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
-
-          # backtracking loop to ensure feasibility
-          while (1) {
-            if (abs(a+1) < 1e-6) {
-              w <- w2
-              F_v[k] <- 1/lambda * norm(X %*% w - r, type = "2")^2 + m/c1 * sum(log(1 + w/p))
-
-              w0 <- w
-              break
-            }
-
-            w <- w0 - 2*a*R + a^2*U
-
-            # Projection
-            w <- bisection(-2*w, u)
+          if (abs(a+1) < 1e-6) {
+            w <- w2
             F_v[k] <- 1/lambda * norm(X %*% w - r, type = "2")^2 + m/c1 * sum(log(1 + w/p))
 
-            if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
-              a <- (a-1)/2
-            else {
-              w0 <- w
-              break
-            }
+            w0 <- w
+            break
           }
 
-          # Stopping criterion
-          if (flg == 0) {
-            rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
-            if ((rel_change <= tol[ee]) || (k >= max_iter)) {
-              plot(F_v[k_:k], type = 'l')
-              k_ <- k + 1
-              break
-            }
+          w <- w0 - 2*a*R + a^2*U
+
+          # Projection
+          w <- bisection(-2*w, u)
+          F_v[k] <- 1/lambda * norm(X %*% w - r, type = "2")^2 + m/c1 * sum(log(1 + w/p))
+
+          if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
+            a <- (a-1)/2
+          else {
+            w0 <- w
+            break
           }
-          flg <- 0
         }
-      }
-      return(weights = w)
-    }
 
-    ######################### MM LOOP FOR DR #########################
-    else if (measure == 'dr') {
-
-      for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
-        p <- pp[ee]
-        c1 <- log(1 + u/p)
-        flg <- 1
-
-        while (1) {
-          k <- k + 1
-
-          # Acceleration double step
-          w1 <- drMMupdate(w0, X, r, B, b, Lmax_A, lambda, p, c1, u)
-          w2 <- drMMupdate(w1, X, r, B, b, Lmax_A, lambda, p, c1, u)
-          R <- w1 - w0
-          U <- w2 - w1 - R
-          a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
-
-          # backtracking loop to ensure feasibility
-          while (1) {
-            if (abs(a+1) < 1e-6) {
-              w <- w2
-              F_v[k] <- 1/lambda * norm(pmax(r - X %*% w, 0), type = "2")^2 + m/c1 * sum(log(1 + w/p))
-
-              w0 <- w
-              break
-            }
-
-            w <- w0 - 2*a*R + a^2*U
-
-            # Projection
-            w <- bisection(-2*w, u)
-            F_v[k] <- 1/lambda * norm(pmax(r - X %*% w, 0), type = "2")^2 + m/c1 * sum(log(1 + w/p))
-
-            if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
-              a <- (a-1)/2
-            else {
-              w0 <- w
-              break
-            }
+        # Stopping criterion
+        if (flg == 0) {
+          rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
+          if ((rel_change <= tol[ee]) || (k >= max_iter)) {
+            break
           }
-
-          # Stopping criterion
-          if (flg == 0) {
-            rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
-            if ((rel_change <= tol[ee]) || (k >= max_iter)) {
-              plot(F_v[k_:k], type = 'l')
-              k_ <- k + 1
-              break
-            }
-          }
-          flg <- 0
         }
+        flg <- 0
       }
-      return(weights = w)
     }
+    return(weights = w)
   }
 
 
-  ######################### HUBER PENALTY #########################
-  else if (is.numeric(hub)){
+  ######################### MM LOOP FOR DR #########################
+  else if (measure == 'dr') {
 
-    ######################### MM LOOP FOR ETE #########################
-    if (measure == 'ete') {
+    A <- 1/m * t(X) %*% X
+    Lmax_A <- eigen(A, symmetric = TRUE, only.values = TRUE)$values[1]
 
-      for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
-        p <- pp[ee]
-        c1 <- log(1 + u/p)
-        flg <- 1
+    B <- 2/Lmax_A * (A - Lmax_A*diag(rep(1, n)))
+    b <- -2/m * t(X) %*% r
 
+    for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
+      p <- pp[ee]
+      c1 <- log(1 + u/p)
+      flg <- 1
+
+      while (1) {
+        k <- k + 1
+
+        # Acceleration double step
+        w1 <- drMMupdate(w0, X, r, B, b, Lmax_A, lambda, p, c1, u)
+        w2 <- drMMupdate(w1, X, r, B, b, Lmax_A, lambda, p, c1, u)
+        R <- w1 - w0
+        U <- w2 - w1 - R
+        a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
+
+        # backtracking loop to ensure feasibility
         while (1) {
-          k <- k + 1
+          if (abs(a+1) < 1e-6) {
+            w <- w2
+            F_v[k] <- 1/lambda * norm(pmax(r - X %*% w, 0), type = "2")^2 + m/c1 * sum(log(1 + w/p))
 
-          # Acceleration double step(w, X, r, lambda, p, c1, m, n, hub, u)
-          w1 <- eteHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
-          w2 <- eteHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
-          R <- w1 - w0
-          U <- w2 - w1 - R
-          a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
+            w0 <- w
+            break
+          }
 
-          # backtracking loop to ensure feasibility
-          while (1) {
-            if (abs(a+1) < 1e-6) {
-              w <- w2
-              tmp <- r - X %*% w
-              h <- rep(0, m)
-              h[abs(tmp) <= hub] <- (tmp[abs(tmp) <= hub])^2
-              h[abs(tmp) > hub] <- hub * (2*abs(tmp[abs(tmp) > hub]) - hub)
+          w <- w0 - 2*a*R + a^2*U
 
-              F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
+          # Projection
+          w <- bisection(-2*w, u)
+          F_v[k] <- 1/lambda * norm(pmax(r - X %*% w, 0), type = "2")^2 + m/c1 * sum(log(1 + w/p))
 
-              w0 <- w
-              break
-            }
+          if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
+            a <- (a-1)/2
+          else {
+            w0 <- w
+            break
+          }
+        }
 
-            w <- w0 - 2*a*R + a^2*U
+        # Stopping criterion
+        if (flg == 0) {
+          rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
+          if ((rel_change <= tol[ee]) || (k >= max_iter)) {
+            break
+          }
+        }
+        flg <- 0
+      }
+    }
+    return(weights = w)
+  }
 
-            # Projection
-            w <- bisection(-2*w, u)
+
+  ######################### MM LOOP FOR HETE #########################
+  else if (measure == 'hete') {
+
+    for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
+      p <- pp[ee]
+      c1 <- log(1 + u/p)
+      flg <- 1
+
+      while (1) {
+        k <- k + 1
+
+        # Acceleration double step(w, X, r, lambda, p, c1, m, n, hub, u)
+        w1 <- eteHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
+        w2 <- eteHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
+        R <- w1 - w0
+        U <- w2 - w1 - R
+        a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
+
+        # backtracking loop to ensure feasibility
+        while (1) {
+          if (abs(a+1) < 1e-6) {
+            w <- w2
             tmp <- r - X %*% w
             h <- rep(0, m)
             h[abs(tmp) <= hub] <- (tmp[abs(tmp) <= hub])^2
@@ -205,66 +186,64 @@ spIndexTrack <- function(X, r, lambda, u = 0.5, measure = 'ete', hub = NULL, w0 
 
             F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
 
-            if ((flg == 0) && ((F_v[k] * (1 - sign(F_v[k])*1e-9)) >= F_v[max(k - 1, 1)]))
-              a <- (a-1)/2
-            else {
-              w0 <- w
-              break
-            }
+            w0 <- w
+            break
           }
 
-          # Stopping criterion
-          if (flg == 0) {
-            rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
-            if ((rel_change <= tol[ee]) || (k >= max_iter)) {
-              plot(F_v[k_:k], type = 'l')
-              k_ <- k + 1
-              break
-            }
+          w <- w0 - 2*a*R + a^2*U
+
+          # Projection
+          w <- bisection(-2*w, u)
+          tmp <- r - X %*% w
+          h <- rep(0, m)
+          h[abs(tmp) <= hub] <- (tmp[abs(tmp) <= hub])^2
+          h[abs(tmp) > hub] <- hub * (2*abs(tmp[abs(tmp) > hub]) - hub)
+
+          F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
+
+          if ((flg == 0) && ((F_v[k] * (1 - sign(F_v[k])*1e-9)) >= F_v[max(k - 1, 1)]))
+            a <- (a-1)/2
+          else {
+            w0 <- w
+            break
           }
-          flg <- 0
         }
+
+        # Stopping criterion
+        if (flg == 0) {
+          rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
+          if ((rel_change <= tol[ee]) || (k >= max_iter)) {
+            break
+          }
+        }
+        flg <- 0
       }
-      return(weights = w)
     }
+    return(weights = w)
+  }
 
-    ######################### MM LOOP FOR DR #########################
-    else if (measure == 'dr') {
+  ######################### MM LOOP FOR HDR #########################
+  else if (measure == 'hdr') {
 
-      for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
-        p <- pp[ee]
-        c1 <- log(1 + u/p)
-        flg <- 1
+    for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
+      p <- pp[ee]
+      c1 <- log(1 + u/p)
+      flg <- 1
 
+      while (1) {
+        k <- k + 1
+
+        # Acceleration double step
+        w1 <- drHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
+        w2 <- drHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
+        R <- w1 - w0
+        U <- w2 - w1 - R
+        a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
+
+        # backtracking loop to ensure feasibility
         while (1) {
-          k <- k + 1
-
-          # Acceleration double step
-          w1 <- drHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
-          w2 <- drHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
-          R <- w1 - w0
-          U <- w2 - w1 - R
-          a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
-
-          # backtracking loop to ensure feasibility
-          while (1) {
-            if (abs(a+1) < 1e-6) {
-              w <- w2
-              tmp <- r - X %*% w
-              h <- rep(0, m)
-              h[(tmp > 0) && (tmp <= hub)] <- tmp[(tmp > 0) && (tmp <= hub)]^2
-              h[tmp > hub] <- hub * (2*abs(tmp[tmp > hub]) - hub)
-
-              F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
-
-              w0 <- w
-              break
-            }
-
-            w <- w0 - 2*a*R + a^2*U
-
-            # Projection
-            w <- bisection(-2*w, u)
+          if (abs(a+1) < 1e-6) {
+            w <- w2
             tmp <- r - X %*% w
             h <- rep(0, m)
             h[(tmp > 0) && (tmp <= hub)] <- tmp[(tmp > 0) && (tmp <= hub)]^2
@@ -272,33 +251,46 @@ spIndexTrack <- function(X, r, lambda, u = 0.5, measure = 'ete', hub = NULL, w0 
 
             F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
 
-            if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
-              a <- (a-1)/2
-            else {
-              w0 <- w
-              break
-            }
+            w0 <- w
+            break
           }
 
-          # Stopping criterion
-          if (flg == 0) {
-            rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
-            if ((rel_change <= tol[ee]) || (k >= max_iter)) {
-              plot(F_v[k_:k], type = 'l')
-              k_ <- k + 1
-              break
-            }
+          w <- w0 - 2*a*R + a^2*U
+
+          # Projection
+          w <- bisection(-2*w, u)
+          tmp <- r - X %*% w
+          h <- rep(0, m)
+          h[(tmp > 0) && (tmp <= hub)] <- tmp[(tmp > 0) && (tmp <= hub)]^2
+          h[tmp > hub] <- hub * (2*abs(tmp[tmp > hub]) - hub)
+
+          F_v[k] <- 1/lambda * sum(h) + m/c1 * sum(log(1 + w/p))
+
+          if (flg == 0 && F_v[k] * (1 - sign(F_v[k])*1e-9) >= F_v[max(k - 1, 1)])
+            a <- (a-1)/2
+          else {
+            w0 <- w
+            break
           }
-          flg <- 0
         }
+
+        # Stopping criterion
+        if (flg == 0) {
+          rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
+          if ((rel_change <= tol[ee]) || (k >= max_iter)) {
+            break
+          }
+        }
+        flg <- 0
       }
-      return(weights = w)
     }
+    return(weights = w)
   }
 }
 
 
-# ete MM update in each iteration
+
+# ete MM update at each iteration
 eteMMupdate <- function(w, B, b, Lmax_A, lambda, p, c1, u) {
   d <- lambda / ((p + abs(w)) * c1)
   c <- B %*% w + 1/Lmax_A * (b + d)
@@ -307,7 +299,7 @@ eteMMupdate <- function(w, B, b, Lmax_A, lambda, p, c1, u) {
 }
 
 
-# dr MM update in each iteration
+# dr MM update at each iteration
 drMMupdate <- function(w, X, r, B, b, Lmax_A, lambda, p, c1, u) {
   h <- pmin(r - X %*% w, 0)
   d <- lambda / ((p + abs(w)) * c1)
@@ -317,7 +309,7 @@ drMMupdate <- function(w, X, r, B, b, Lmax_A, lambda, p, c1, u) {
 }
 
 
-# ete-hub MM update in each iteration
+# ete-hub MM update at each iteration
 eteHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
   d <- lambda / ((p + abs(w)) * c1)
   tmp <- r - X %*% w
@@ -333,13 +325,14 @@ eteHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
 }
 
 
-# dr-hub MM update in each iteration
+# dr-hub MM update at each iteration
 drHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
   d <- lambda / ((p + abs(w)) * c1)
 
   tmp <- r - X %*% w
   alpha <- rep(1, m)
-  alpha[abs(tmp) > hub] <- hub / abs(tmp[abs(tmp) > hub])
+  alpha[tmp > hub] <- hub / tmp[tmp > hub]
+  alpha[tmp < 0] <- hub / (hub - 2*tmp[tmp < 0])
 
   q <- -pmax(X %*% w - r, 0)
 
@@ -455,5 +448,4 @@ bisection <- function(c, u) {
     }
   }
 }
-
 
