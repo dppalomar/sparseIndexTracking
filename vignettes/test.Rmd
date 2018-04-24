@@ -3,6 +3,10 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   pdf_document:
     fig_caption: yes
     keep_tex: yes
@@ -14,10 +18,8 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-header-includes: \setlength{\parindent}{12pt} 
-                 \usepackage{graphicx} 
-                 \usepackage{bm}
 graphics: yes
+header-includes: \setlength{\parindent}{12pt} \usepackage{graphicx} \usepackage{bm}
 csl: ieee.csl
 bibliography: refs.bib
 vignette: |
@@ -45,6 +47,27 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 
 # Comparison with other packages
 
+> **Proposition 1**
+  Lalala lala
+  lolo $\alpha$ lala
+  $$\alpha$$
+  lala  
+  dfdfd
+  
+> **Proposition 1**
+  The optimal solution of the optimization problem above with $u=1$ is
+  $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$
+  with
+  $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$
+  and
+  $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$
+  where $\mathcal{A}$ can be determined in $O(\log(N))$ steps.
+
+$$\alpha$$
+
+\begin{equation}
+\alpha
+\end{equation}
 
 # Usage of the package
 
