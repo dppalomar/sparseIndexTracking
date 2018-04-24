@@ -14,9 +14,9 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-header-includes: \setlength{\parindent}{12pt} 
-                 \usepackage{graphicx} 
-                 \usepackage{bm}
+header-includes: 
+  \setlength{\parindent}{12pt} 
+  \usepackage{graphicx} 
 graphics: yes
 csl: ieee.csl
 bibliography: refs.bib
@@ -56,124 +56,151 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T$ and $\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}$ the (arithmetic) net returns of the index and the $N$ assets in the past $T$ days, respectively, with $\mathbf{r}_t\in\mathbb{R}^N$ denoting the net returns of the $N$ assets at the $t$-th day.
 
 The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
-$$\begin{equation}
-\begin{aligned}\label{opt:joint_index_tracking}
+$$
+\begin{aligned}
     &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
     &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+    &\hspace{24mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
 \end{aligned}
-\end{equation}$$ 
+$$ 
 where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. 
 
 The $\ell_0$-"norm" is approximated by the continuous and differentiable function (for $\mathbf{w} \geq \mathbf{0}$)
 $$
-\begin{equation}\label{eq:approx_func_u}
 \rho_{p,u}(w) = \frac{\log(1 + w/p)}{\log(1 + u/p)},
-\end{equation} 
 $$
 where $p>0$ is a parameter that controls the approximation. This leads to the following approximate problem:
-$$\begin{equation}
-\begin{aligned}\label{opt:joint_index_tracking_approx}
-    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\bm{\rho}_{p,u}(\mathbf{w})\\
+$$
+\begin{aligned}
+    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\boldsymbol{\rho}_{p,u}(\mathbf{w})\\
     &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+    &\hspace{24mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
 \end{aligned}
-\end{equation}$$ 
-where $\bm{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
+$$ 
+where $\boldsymbol{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
 
 There are four available tracking errors $\text{TE}(\mathbf{w}$) in `spIndexTrack()`:
 
 * Empirical tracking error (ETE):
 
-$$\begin{equation}\label{eq:ETE}
-\text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2
-\end{equation} $$
+$$
+\text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2,
+$$
 
 * Downside risk (DR):
 
-$$\begin{equation}\label{eq:DR}
-\text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2
-\end{equation}$$     
+$$
+\text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2,
+$$     
 
 * Huber empirical tracking error (HETE):
 
-$$\begin{equation}
-\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right),\label{eq:huber-ETE}
-\end{equation}$$ 
+$$
+\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right),
+$$ 
 
 * Huber downside risk (HDR):
 
-$$\begin{equation}
-\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right),\label{eq:huber-DR}
-\end{equation}$$ 
-where $\bm{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
-$$\begin{equation}\label{eq:Huber}
+$$
+\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right),
+$$ 
+where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
+$$
 \phi(x) = \begin{cases}
 x^2, &\quad |x| \leq M,\\
 M(2|x| - M), &\quad |x| > M,
 \end{cases}
-\end{equation}$$
+$$
 with $M>0$ being the Huber parameter.
 
 
-Regardless of the selected tracking error measure this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm. It can be shown that all of the above variations boil down to the optimization of the following convex problem:
-$$\begin{equation}
-\begin{aligned}\label{opt:general_form}
-&\underset{\mathbf{w}}{\text{minimize}}\quad \mathbf{w}^\top\mathbf{w} + \mathbf{q}^\top\mathbf{w}\\
+Regardless of the selected tracking error measure, this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative (with iteraions denoted by $k$) closed-form update algorithm. It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
+$$
+\begin{aligned}
+&\underset{\mathbf{w}}{\text{minimize}}\quad \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
 &\text{subject to}\quad \mathbf{w}\in\mathcal{W}_{u},
 \end{aligned}
-\end{equation}$$
+$$
 where 
-$$\begin{equation}\label{eq:Wu}
+$$
 \mathcal{W}_{u} = \big\{\mathbf{w} \big| \mathbf{w}^\top\mathbf{1} = 1, \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1}\big\},
-\end{equation}$$
-and $\mathbf{q}\in\mathbb{R}^N$. 
-
-ADD TABLE WITH THE DIFFERENT $\mathbf{q}$ FOR EACH TE.
-
-HOW CAN WE ADD PROPOSITIONS?
-
-The following propositions provide a waterfilling structured solution of \eqref{opt:general_form}, considering two special cases, namely, $u=1$ and $u<1$.
-
 $$
-\begin{proposition}\label{prop:closedform}
-	The optimal solution of the optimization problem \eqref{opt:general_form} with $u=1$ is
-	\begin{equation}
-	\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,
-	\end{equation}
-	with
-	\begin{equation}
-	\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},
-	\end{equation}
-	and
-	\begin{equation}
-	\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},
-	\end{equation}
-	where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. 
-\end{proposition}$$
-We refer to the iterative procedure of Proposition \ref{prop:closedform} as AS$_{1}(\mathbf{w})$ (Active-Set for $u=1$).
+and $\mathbf{q}^{(k)}\in\mathbb{R}^N$. 
 
+What differentiates the various tracking errors is the exact form of $\mathbf{q}^{(k)}$ that we need to copmute at each iteration $k$ of the algorithm:
 $$
-\begin{proposition}\label{prop:closedform_u}
-	The optimal solution of the optimization problem \eqref{opt:general_form} with $u<1$ is
-	\begin{equation}
-	\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,
-	\end{equation}
-	with 
-	\begin{equation}\label{eq:mu_u}
-	\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},
-	\end{equation}
-	and
-	\begin{align}
+\begin{gather}
+  \mathbf{q}_{\text{ETE}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}}(2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\mathbf{r}^b),\\
+  \mathbf{q}_{\text{DR}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}} (\frac{2}{T} 2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda\mathbf{d}_{p,u}^{(k)} + \frac{2}{T}\mathbf{X}^\top(\mathbf{y}^{(k)} - \mathbf{r}^b)),\\
+  \mathbf{q}_{\text{HETE}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_2)}}(2(\mathbf{L}_2 - \lambda_{\text{max}}^{(\mathbf{L}_2)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{r}^b),\\ 
+  \mathbf{q}_{\text{HDR}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_3)}}(2(\mathbf{L}_3 - \lambda_{\text{max}}^{(\mathbf{L}_3)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} +\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})(\mathbf{c}^{(k)} - \mathbf{r}^b)),
+\end{gather}
+$$
+where $\lambda_{\text{max}}^{(\mathbf{A})}$ denotes the maximum eigenvalue of a matrix $\mathbf{A}$, $\mathbf{I}$ denotes the identity matrix, $\text{Diag}(\mathbf{x})$ is a diagonal matrix with the vector $\mathbf{x}$ at its principal diagonal, and  
+$$
+\begin{gather}
+  \mathbf{d}_{p,u}^{(k)} = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
+	d_{p,u}(w^{(k)}) = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
+	\mathbf{y}^{(k)} = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
+	\mathbf{a}^{(k)} = [a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top\\
+	a(x) = \begin{cases}
+	1, &\quad |x|\leq M,\\
+	\frac{M}{|x|}, &\quad |x| > M,
+	\end{cases}\\
+	\mathbf{b}^{(k)} = [b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top\\
+	b(x) = \begin{cases}
+	\frac{M}{M - 2x, &\quad x < 0,\\
+	1, &\quad0\leq x\leq M,\\
+	\frac{M}{|x|}, &\quad x^ > M,
+	\end{cases}\\
+	\mathbf{c}^{(k)} = [c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top\\
+	c(x) = \begin{cases}
+	x, &\quad x < 0,\\
+	0, &\quad x \geq 0,
+	\end{cases}\\
+	\mathbf{L}_1 = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
+	\mathbf{L}_2 = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
+	\mathbf{L}_3 = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
+\end{gather}
+$$
+
+The following propositions provide a waterfilling structured solution of the above optimization problem, considering two special cases, namely, $u=1$ and $u<1$.
+
+> **Proposition 1**
+The optimal solution of the optimization problem \eqref{opt:general_form} with $u=1$ is
+$$	
+\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,
+$$	
+with
+$$	
+\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},
+$$	
+and
+$$	
+\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},
+$$	
+where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. We refer to the iterative procedure of Proposition 1 as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
+
+> **Proposition 2**
+The optimal solution of the optimization problem \eqref{opt:general_form} with $u<1$ is
+$$	
+\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,
+$$	
+with 
+$$	
+\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},
+$$	
+and
+$$	
+\begin{align}
 	\mathcal{B}_1 =& \big\{j \big| \mu + q_j \leq -2u\big\},\\
 	\mathcal{B}_2 =& \big\{j \big| -2u < \mu + q_j < 0\big\},
-	\end{align}
-	where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps.
-\end{proposition}$$
-We refer to the iterative procedure of Proposition \ref{prop:closedform_u} as AS$_u(\vq)$ (Active-Set for general $u<1$).
+\end{align}
+$$	
+where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps. We refer to the iterative procedure of Proposition 2 as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
 
 
-The iterative closed-form update algorithm is:  
+The iterative closed-form update algorithm is (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$):  
 
 > 1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$  
 2. Compute $\mathbf{q}$ according to the selected tracking error  
@@ -182,8 +209,8 @@ The iterative closed-form update algorithm is:
 6. Repeat steps 2-4 until convergence  
 7. Return $\mathbf{w}^{(k)}$  
 
-The initial point of the algorithm $\mathbf{U}^{(0)}$ is set by default to the $q$ leading standard eigenvectors, unless the user specifies otherwise. Internally, all the computations of $\mathbf{G}^{(k)}$ and $\mathbf{H}^{(k)}$ are done through the eigenvalue decomposition (EVD) of $\mathbf{S}$. Since we can also retrieve the eigenvectors and eigenvalues of $\mathbf{S}$ through the singular value decomposition (SVD) of the data matrix $\mathbf{X}$, with $\mathbf{S} = \frac{1}{n-1}\mathbf{X}^\top\mathbf{X}$, it becomes possible to use as an input to `spEigen()` either the covariance matrix $\mathbf{S}$ or directly the data matrix $\mathbf{X}$.  
-  
+The initial point of the algorithm $\mathbf{w}^{(0)}$ is set by default to $1/N$, unless the user specifies otherwise. 
+
 Finally, note that the approximate problem is controlled by the parameter $p$, and in particular, as $p\rightarrow0$ we get  $\rho_{p,u}\rightarrow\ell_0$. However, by setting small values to $p$, it is likely that the algorithm will get stuck to a local minimum. To solve this issue we start with large values for $p$, i.e., a "loose" approximation, and solve the corresponding optimization problem. Then, we sequentially decrease $p$, i.e., we "tighten" the approximation, and solve the problem again using the previous solution as an initial point. In practice we are interested only in the last, "tightest" problem. For each problem that is solved (i.e., for fixed $p$) we utilize an acceleration scheme that increases the convergence speed of the MM algorithm. For details, please refer to [@Varadhan2008].   
 
 

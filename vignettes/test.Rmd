@@ -3,10 +3,6 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '2'
   pdf_document:
     fig_caption: yes
     keep_tex: yes
@@ -19,7 +15,10 @@ output:
     toc: yes
     toc_depth: 2
 graphics: yes
-header-includes: \setlength{\parindent}{12pt} \usepackage{graphicx} \usepackage{bm}
+header-includes: 
+  \setlength{\parindent}{12pt} 
+  \usepackage{graphicx} 
+  \usepackage{bm}
 csl: ieee.csl
 bibliography: refs.bib
 vignette: |
@@ -47,13 +46,46 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 
 # Comparison with other packages
 
+Proposition 1 lalal
+: Lalala lala
+  lolo $\alpha$ lala
+  $$\alpha$$
+  lala  
+  dfdfd
+    
+This is over
+
+Term 2 with *inline markup*
+
+:   Definition 2
+
+        { some code, part of Definition 2 }
+
+    Third paragraph of definition 2.
+    
+
 > **Proposition 1**
   Lalala lala
   lolo $\alpha$ lala
   $$\alpha$$
   lala  
   dfdfd
+
+    **Proposition 1**
+    Lalala lala
+    lolo $\alpha$ lala
+    $$\alpha$$
+    lala  
+    dfdfd
   
+200 Main St.  
+Berkeley, CA 94718
+  
+200 Main St.  
+Berkeley, CA 94718
+
+
+
 > **Proposition 1**
   The optimal solution of the optimization problem above with $u=1$ is
   $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$
