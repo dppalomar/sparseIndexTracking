@@ -3,9 +3,13 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    fig_caption: yes
-    keep_tex: yes
+  bookdown::html_book:
+    base_format: rmarkdown::html_vignette
+  bookdown::pdf_book:
+    base_format: rmarkdown::pdf_document
+  bookdown::html_document2:
+  bookdown::pdf_document2:
+    fig_caption: yes    
     number_sections: yes
     toc: yes
     toc_depth: 2
@@ -17,11 +21,10 @@ output:
 graphics: yes
 header-includes: 
   \setlength{\parindent}{12pt} 
-  \usepackage{graphicx} 
-  \usepackage{bm}
+  \usepackage{graphicx}
 csl: ieee.csl
 bibliography: refs.bib
-vignette: |
+vignette: >
   %\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}
   %\VignetteKeyword{sparse, portfolio, financial index}
   %\VignetteEncoding{UTF-8}
@@ -34,10 +37,13 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center"
 )
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/test.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/test.Rmd", "bookdown::pdf_document2")
+#rmarkdown::render("vignettes/test.Rmd", "bookdown::pdf_book")
+#rmarkdown::render("vignettes/test.Rmd", "bookdown::html_document2")
+#rmarkdown::render("vignettes/test.Rmd", "bookdown::html_book")
+
 #rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "rmarkdown::html_vignette")
-#tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
 ```
 
 -----------
@@ -46,60 +52,6 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 
 # Comparison with other packages
 
-Proposition 1 lalal
-: Lalala lala
-  lolo $\alpha$ lala
-  $$\alpha$$
-  lala  
-  dfdfd
-    
-This is over
-
-Term 2 with *inline markup*
-
-:   Definition 2
-
-        { some code, part of Definition 2 }
-
-    Third paragraph of definition 2.
-    
-
-> **Proposition 1**
-  Lalala lala
-  lolo $\alpha$ lala
-  $$\alpha$$
-  lala  
-  dfdfd
-
-    **Proposition 1**
-    Lalala lala
-    lolo $\alpha$ lala
-    $$\alpha$$
-    lala  
-    dfdfd
-  
-200 Main St.  
-Berkeley, CA 94718
-  
-200 Main St.  
-Berkeley, CA 94718
-
-
-
-> **Proposition 1**
-  The optimal solution of the optimization problem above with $u=1$ is
-  $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$
-  with
-  $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$
-  and
-  $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$
-  where $\mathcal{A}$ can be determined in $O(\log(N))$ steps.
-
-$$\alpha$$
-
-\begin{equation}
-\alpha
-\end{equation}
 
 # Usage of the package
 
@@ -108,24 +60,6 @@ $$\alpha$$
 
 ## `spIndexTrack()`: Sparse portfolio construction
 
-Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T$ and $\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}$ the (arithmetic) net returns of the index and the $N$ assets in the past $T$ days, respectively, with $\mathbf{r}_t\in\mathbb{R}^N$ denoting the net returns of the $N$ assets at the $t$-th day.
-
-The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
-    $$\begin{aligned}
-		&\underset{\mathbf{\xi}}{\text{minimize}}\quad \sum_{i=1}^{m}\left(\log\xi_i+\alpha_i^{(k)}\xi_i+\lambda_{\max}^{(\mathbf{S})}\frac{1}{\xi_i}\right)\\
-		&\!\begin{array}{lll}
-		\text{subject to} & \xi_{i}\geq \xi_{i+1}, & i=1,\dots, q-1,\\
-		 & \xi_{q}\geq \xi_{q+i}, & i=1,\dots,m-q,
-		\end{array}
-	\end{aligned}$$
-	
-$$
-\begin{aligned}
-    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
-    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
-\end{aligned}
-$$ 
 
 
 

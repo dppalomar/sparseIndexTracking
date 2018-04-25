@@ -3,29 +3,26 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '2'
-  pdf_document:
-    fig_caption: yes
-    keep_tex: yes
-    number_sections: yes
-    toc: yes
-    toc_depth: 2
   rmarkdown::html_vignette:
     fig_caption: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
+  pdf_document:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 2
 graphics: yes
-header-includes: \setlength{\parindent}{12pt} \usepackage{graphicx}
+header-includes: 
+  \setlength{\parindent}{12pt} 
+  \usepackage{graphicx}
 csl: ieee.csl
 bibliography: refs.bib
 vignette: |
-  %\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}
-  %\VignetteKeyword{sparse, portfolio, financial index}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Design of portfolio of stocks to track an index} 
+  %\VignetteKeyword{sparse, portfolio, financial index, tracking} 
+  %\VignetteEncoding{UTF-8} 
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
@@ -59,12 +56,13 @@ Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^
 
 The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
 $$
-\begin{aligned}
-    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
-    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &\hspace{24mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
-\end{aligned}
-$$ 
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+\textsf{subject to}
+ & \mathbf{w}^\top\mathbf{1}=1\\
+ & \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{array} \qquad (1)
+$$
 where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. 
 
 The $\ell_0$-"norm" is approximated by the continuous and differentiable function (for $\mathbf{w} \geq \mathbf{0}$)
@@ -73,12 +71,13 @@ $$
 $$
 where $p>0$ is a parameter that controls the approximation. This leads to the following approximate problem:
 $$
-\begin{aligned}
-    &\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\boldsymbol{\rho}_{p,u}(\mathbf{w})\\
-    &\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &\hspace{24mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
-\end{aligned}
-$$ 
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\boldsymbol{\rho}_{p,u}(\mathbf{w})\\
+\textsf{subject to}
+ & \mathbf{w}^\top\mathbf{1}=1\\
+ & \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{array} \qquad (2)
+$$
 where $\boldsymbol{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
 
 There are four available tracking errors $\text{TE}(\mathbf{w}$) in `spIndexTrack()`:
@@ -86,42 +85,42 @@ There are four available tracking errors $\text{TE}(\mathbf{w}$) in `spIndexTrac
 * Empirical tracking error (ETE):
 
 $$
-\text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2,
+\text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2
 $$
 
 * Downside risk (DR):
 
 $$
-\text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2,
+\text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2
 $$     
 
 * Huber empirical tracking error (HETE):
 
 $$
-\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right),
+\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right)
 $$ 
 
 * Huber downside risk (HDR):
 
 $$
-\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right),
+\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right)
 $$ 
-where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
+where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$ and 
 $$
 \phi(x) = \begin{cases}
-x^2, &\quad |x| \leq M,\\
-M(2|x| - M), &\quad |x| > M,
+x^2 &\quad |x| \leq M\\
+M(2|x| - M) &\quad |x| > M,
 \end{cases}
 $$
 with $M>0$ being the Huber parameter.
 
 
-Regardless of the selected tracking error measure, this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative (with iteraions denoted by $k$) closed-form update algorithm. It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
+Regardless of the selected tracking error measure, this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm (with iterations denoted by $k$). It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
 $$
-\begin{aligned}
-&\underset{\mathbf{w}}{\text{minimize}}\quad \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
-&\text{subject to}\quad \mathbf{w}\in\mathcal{W}_{u},
-\end{aligned}
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} & \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
+\textsf{subject to} & \mathbf{w}\in\mathcal{W}_{u},
+\end{array} \qquad (3)
 $$
 where 
 $$
@@ -129,88 +128,66 @@ $$
 $$
 and $\mathbf{q}^{(k)}\in\mathbb{R}^N$. 
 
-What differentiates the various tracking errors is the exact form of $\mathbf{q}^{(k)}$ that we need to copmute at each iteration $k$ of the algorithm:
+What differentiates the various tracking errors is the exact form of $\mathbf{q}^{(k)}$ that we need to compute at each iteration $k$ of the algorithm:
 $$
-\begin{gather}
-  \mathbf{q}_{\text{ETE}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}}(2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\mathbf{r}^b),\\
-  \mathbf{q}_{\text{DR}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}} (\frac{2}{T} 2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda\mathbf{d}_{p,u}^{(k)} + \frac{2}{T}\mathbf{X}^\top(\mathbf{y}^{(k)} - \mathbf{r}^b)),\\
-  \mathbf{q}_{\text{HETE}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_2)}}(2(\mathbf{L}_2 - \lambda_{\text{max}}^{(\mathbf{L}_2)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{r}^b),\\ 
-  \mathbf{q}_{\text{HDR}}^{(k)} = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_3)}}(2(\mathbf{L}_3 - \lambda_{\text{max}}^{(\mathbf{L}_3)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} +\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})(\mathbf{c}^{(k)} - \mathbf{r}^b)),
-\end{gather}
+\begin{aligned}
+  \mathbf{q}_{\text{ETE}}^{(k)} & = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}}(2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\mathbf{r}^b),\\
+  \mathbf{q}_{\text{DR}}^{(k)} & = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}} (\frac{2}{T} 2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda\mathbf{d}_{p,u}^{(k)} + \frac{2}{T}\mathbf{X}^\top(\mathbf{y}^{(k)} - \mathbf{r}^b)),\\
+  \mathbf{q}_{\text{HETE}}^{(k)} & = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_2)}}(2(\mathbf{L}_2 - \lambda_{\text{max}}^{(\mathbf{L}_2)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{r}^b),\\ 
+  \mathbf{q}_{\text{HDR}}^{(k)} & = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_3)}}(2(\mathbf{L}_3 - \lambda_{\text{max}}^{(\mathbf{L}_3)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} +\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})(\mathbf{c}^{(k)} - \mathbf{r}^b)),
+\end{aligned}
 $$
 where $\lambda_{\text{max}}^{(\mathbf{A})}$ denotes the maximum eigenvalue of a matrix $\mathbf{A}$, $\mathbf{I}$ denotes the identity matrix, $\text{Diag}(\mathbf{x})$ is a diagonal matrix with the vector $\mathbf{x}$ at its principal diagonal, and  
 $$
-\begin{gather}
-  \mathbf{d}_{p,u}^{(k)} = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
-	d_{p,u}(w^{(k)}) = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
-	\mathbf{y}^{(k)} = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
-	\mathbf{a}^{(k)} = [a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
-	a(x) = \begin{cases}
-	1, &\quad |x|\leq M,\\
-	\frac{M}{|x|}, &\quad |x| > M,
-	\end{cases}\\
-	\mathbf{b}^{(k)} = [b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
-	b(x) = \begin{cases}
-	\frac{M}{M - 2x}, &\quad x < 0,\\
-	1, &\quad0\leq x\leq M,\\
-	\frac{M}{x}, &\quad x > M,
-	\end{cases}\\
-	\mathbf{c}^{(k)} = [c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
-	c(x) = \begin{cases}
-	x, &\quad x < 0,\\
-	0, &\quad x \geq 0,
-	\end{cases}\\
-	\mathbf{L}_1 = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
-	\mathbf{L}_2 = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
-	\mathbf{L}_3 = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
-\end{gather}
+\begin{aligned}
+  \mathbf{d}_{p,u}^{(k)} & = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
+	d_{p,u}(w^{(k)}) & = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
+	\mathbf{y}^{(k)} & = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
+	\mathbf{a}^{(k)} & = [a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+	a(x) & = \begin{cases} 1 &\quad |x|\leq M\\
+	\frac{M}{|x|} &\quad |x| > M,\end{cases}\\
+	\mathbf{b}^{(k)} & = [b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+	b(x) & = \begin{cases} \frac{M}{M - 2x} &\quad x < 0\\
+	1 &\quad0\leq x\leq M\\
+	\frac{M}{x} &\quad x > M,\end{cases}\\
+	\mathbf{c}^{(k)} & = [c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+	c(x) & = \begin{cases} x &\quad x < 0\\
+	0 &\quad x \geq 0,\end{cases}\\
+	\mathbf{L}_1 & = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
+	\mathbf{L}_2 & = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
+	\mathbf{L}_3 & = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
+\end{aligned}
 $$
 
 The following propositions provide a waterfilling structured solution of the above optimization problem, considering two special cases, namely, $u=1$ and $u<1$.
 
-> **Proposition 1**
-The optimal solution of the optimization problem \eqref{opt:general_form} with $u=1$ is
-$$	
-\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,
-$$	
-with
-$$	
-\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},
-$$	
-and
-$$	
-\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},
-$$	
-where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. We refer to the iterative procedure of Proposition 1 as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
+> **Proposition 1** The optimal solution of the optimization problem (3) with $u=1$ is
+  $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$	
+  with $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$	
+  and $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$	
+  where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. We refer to the iterative procedure of 
+  Proposition 1 as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
 
-> **Proposition 2**
-The optimal solution of the optimization problem \eqref{opt:general_form} with $u<1$ is
-$$	
-\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,
-$$	
-with 
-$$	
-\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},
-$$	
-and
-$$	
-\begin{align}
-	\mathcal{B}_1 =& \big\{j \big| \mu + q_j \leq -2u\big\},\\
-	\mathcal{B}_2 =& \big\{j \big| -2u < \mu + q_j < 0\big\},
-\end{align}
-$$	
-where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps. We refer to the iterative procedure of Proposition 2 as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
+> **Proposition 2** The optimal solution of the optimization problem (3) with $u<1$ is
+  $$\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,$$	
+  with $$\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},$$	
+  and $$\begin{aligned}
+	\mathcal{B}_1 &= \big\{j \big| \mu + q_j \leq -2u\big\},\\
+	\mathcal{B}_2 &= \big\{j \big| -2u < \mu + q_j < 0\big\},
+	\end{aligned}$$	
+  where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps. We refer to 
+  the iterative procedure of Proposition 2 as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
 
 
 The iterative closed-form update algorithm is (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$):  
 
-> **Algorithm 1** <br />
-1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$  
-2. Compute $\mathbf{q}$ according to the selected tracking error  
-3. Find the optimal solution $\mathbf{w}^\star$ with AS$_{1|u}(\mathbf{q})$ and set it equal to $\mathbf{w}^{(k+1)}$ <br />
-4. $k \gets k+1$  
-5. Repeat steps 2-4 until convergence  
-6. Return $\mathbf{w}^{(k)}$  
+> **Algorithm 1**  
+  1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$  
+  2. Compute $\mathbf{q}$ according to the selected tracking error  
+  3. Find the optimal solution $\mathbf{w}^\star$ with AS$_{1|u}(\mathbf{q})$ and set it equal to $\mathbf{w}^{(k+1)}$ <br />
+  4. $k \gets k+1$  
+  5. Repeat steps 2-4 until convergence  
+  6. Return $\mathbf{w}^{(k)}$  
 
 The initial point of the algorithm $\mathbf{w}^{(0)}$ is set by default to $1/N$, unless the user specifies otherwise. 
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Konstantinos Benidis and Daniel P. Palomar" />
 
-<meta name="date" content="2018-04-23" />
+<meta name="date" content="2018-04-25" />
 
 <title>Design of Portfolio of Stocks to Track an Index</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Design of Portfolio of Stocks to Track an Index</h1>
 <h4 class="author"><em>Konstantinos Benidis and Daniel P. Palomar</em></h4>
-<h4 class="date"><em>2018-04-23</em></h4>
+<h4 class="date"><em>2018-04-25</em></h4>
 
 
 <div id="TOC">
@@ -59,114 +59,115 @@
 <div id="spindextrack-sparse-portfolio-construction" class="section level2">
 <h2><span class="header-section-number">3.1</span> <code>spIndexTrack()</code>: Sparse portfolio construction</h2>
 <p>Assume that an index is composed of <span class="math inline">\(N\)</span> assets. We denote by <span class="math inline">\(\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T\)</span> and <span class="math inline">\(\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}\)</span> the (arithmetic) net returns of the index and the <span class="math inline">\(N\)</span> assets in the past <span class="math inline">\(T\)</span> days, respectively, with <span class="math inline">\(\mathbf{r}_t\in\mathbb{R}^N\)</span> denoting the net returns of the <span class="math inline">\(N\)</span> assets at the <span class="math inline">\(t\)</span>-th day.</p>
-<p>The goal of <code>spIndexTrack()</code> is the design of a (sparse) portfolio <span class="math inline">\(\mathbf{w}\in\mathbb{R}_+^N\)</span>, with <span class="math inline">\(\mathbf{w}^\top\mathbf{1} = 1\)</span>, that tracks closely the index, i.e., <span class="math inline">\(\mathbf{X}\mathbf{w} \approx \mathbf{r}^b\)</span>, based on <span class="citation">[1]</span>. The underlying optimization problem that is solved is <span class="math display">\[\begin{equation}
-\begin{aligned}\label{opt:joint_index_tracking}
-    &amp;\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
-    &amp;\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &amp;\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
-\end{aligned}
-\end{equation}\]</span> where <span class="math inline">\(\text{TE}(\mathbf{w})\)</span> is a general tracking error (we will see specific tracking errors shortly), <span class="math inline">\(\lambda\)</span> is a regularization parameter that controls the sparsity of the portfolio, and <span class="math inline">\(u\)</span> is an upper bound on the weights of the portfolio.</p>
+<p>The goal of <code>spIndexTrack()</code> is the design of a (sparse) portfolio <span class="math inline">\(\mathbf{w}\in\mathbb{R}_+^N\)</span>, with <span class="math inline">\(\mathbf{w}^\top\mathbf{1} = 1\)</span>, that tracks closely the index, i.e., <span class="math inline">\(\mathbf{X}\mathbf{w} \approx \mathbf{r}^b\)</span>, based on <span class="citation">[1]</span>. The underlying optimization problem that is solved is <span class="math display">\[
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} &amp; \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+\textsf{subject to}
+ &amp; \mathbf{w}^\top\mathbf{1}=1\\
+ &amp; \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{array} \qquad (1)
+\]</span> where <span class="math inline">\(\text{TE}(\mathbf{w})\)</span> is a general tracking error (we will see specific tracking errors shortly), <span class="math inline">\(\lambda\)</span> is a regularization parameter that controls the sparsity of the portfolio, and <span class="math inline">\(u\)</span> is an upper bound on the weights of the portfolio.</p>
 <p>The <span class="math inline">\(\ell_0\)</span>-“norm” is approximated by the continuous and differentiable function (for <span class="math inline">\(\mathbf{w} \geq \mathbf{0}\)</span>) <span class="math display">\[
-\begin{equation}\label{eq:approx_func_u}
 \rho_{p,u}(w) = \frac{\log(1 + w/p)}{\log(1 + u/p)},
-\end{equation} 
-\]</span> where <span class="math inline">\(p&gt;0\)</span> is a parameter that controls the approximation. This leads to the following approximate problem: <span class="math display">\[\begin{equation}
-\begin{aligned}\label{opt:joint_index_tracking_approx}
-    &amp;\underset{\mathbf{w}}{\text{minimize}}\quad \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\bm{\rho}_{p,u}(\mathbf{w})\\
-    &amp;\text{subject to}\quad \mathbf{w}^\top\mathbf{1}=1,\\
-    &amp;\hspace{25mm} \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
-\end{aligned}
-\end{equation}\]</span> where <span class="math inline">\(\bm{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top\)</span>.</p>
+\]</span> where <span class="math inline">\(p&gt;0\)</span> is a parameter that controls the approximation. This leads to the following approximate problem: <span class="math display">\[
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} &amp; \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\boldsymbol{\rho}_{p,u}(\mathbf{w})\\
+\textsf{subject to}
+ &amp; \mathbf{w}^\top\mathbf{1}=1\\
+ &amp; \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{array} \qquad (2)
+\]</span> where <span class="math inline">\(\boldsymbol{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top\)</span>.</p>
 <p>There are four available tracking errors <span class="math inline">\(\text{TE}(\mathbf{w}\)</span>) in <code>spIndexTrack()</code>:</p>
 <ul>
 <li>Empirical tracking error (ETE):</li>
 </ul>
-<p><span class="math display">\[\begin{equation}\label{eq:ETE}
+<p><span class="math display">\[
 \text{ETE}(\mathbf{w}) = \frac{1}{T}\big\|\mathbf{r}^b - \mathbf{X}\mathbf{w}\big\|_2^2
-\end{equation} \]</span></p>
+\]</span></p>
 <ul>
 <li>Downside risk (DR):</li>
 </ul>
-<p><span class="math display">\[\begin{equation}\label{eq:DR}
+<p><span class="math display">\[
 \text{DR}(\mathbf{w}) = \frac{1}{T}\big\|(\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\big\|_2^2
-\end{equation}\]</span></p>
+\]</span></p>
 <ul>
 <li>Huber empirical tracking error (HETE):</li>
 </ul>
-<p><span class="math display">\[\begin{equation}
-\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right),\label{eq:huber-ETE}
-\end{equation}\]</span></p>
+<p><span class="math display">\[
+\text{HETE}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left(\mathbf{r}^b - \mathbf{X}\mathbf{w}\right)
+\]</span></p>
 <ul>
 <li>Huber downside risk (HDR):</li>
 </ul>
-<p><span class="math display">\[\begin{equation}
-\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\bm{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right),\label{eq:huber-DR}
-\end{equation}\]</span> where <span class="math inline">\(\bm{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top\)</span>, and <span class="math display">\[\begin{equation}\label{eq:Huber}
+<p><span class="math display">\[
+\text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right)
+\]</span> where <span class="math inline">\(\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top\)</span> and <span class="math display">\[
 \phi(x) = \begin{cases}
-x^2, &amp;\quad |x| \leq M,\\
-M(2|x| - M), &amp;\quad |x| &gt; M,
+x^2 &amp;\quad |x| \leq M\\
+M(2|x| - M) &amp;\quad |x| &gt; M,
 \end{cases}
-\end{equation}\]</span> with <span class="math inline">\(M&gt;0\)</span> being the Huber parameter.</p>
-<p>Regardless of the selected tracking error measure this problem can be solved via Majorization-Minimization (MM) <span class="citation">[2]</span> with an iterative closed-form update algorithm. It can be shown that all of the above variations boil down to the optimization of the following convex problem: <span class="math display">\[\begin{equation}
-\begin{aligned}\label{opt:general_form}
-&amp;\underset{\mathbf{w}}{\text{minimize}}\quad \mathbf{w}^\top\mathbf{w} + \mathbf{q}^\top\mathbf{w}\\
-&amp;\text{subject to}\quad \mathbf{w}\in\mathcal{W}_{u},
-\end{aligned}
-\end{equation}\]</span> where <span class="math display">\[\begin{equation}\label{eq:Wu}
+\]</span> with <span class="math inline">\(M&gt;0\)</span> being the Huber parameter.</p>
+<p>Regardless of the selected tracking error measure, this problem can be solved via Majorization-Minimization (MM) <span class="citation">[2]</span> with an iterative closed-form update algorithm (with iterations denoted by <span class="math inline">\(k\)</span>). It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem: <span class="math display">\[
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} &amp; \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
+\textsf{subject to} &amp; \mathbf{w}\in\mathcal{W}_{u},
+\end{array} \qquad (3)
+\]</span> where <span class="math display">\[
 \mathcal{W}_{u} = \big\{\mathbf{w} \big| \mathbf{w}^\top\mathbf{1} = 1, \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1}\big\},
-\end{equation}\]</span> and <span class="math inline">\(\mathbf{q}\in\mathbb{R}^N\)</span>.</p>
-<p>ADD TABLE WITH THE DIFFERENT <span class="math inline">\(\mathbf{q}\)</span> FOR EACH TE.</p>
-<p>HOW CAN WE ADD PROPOSITIONS?</p>
-<p>The following propositions provide a waterfilling structured solution of , considering two special cases, namely, <span class="math inline">\(u=1\)</span> and <span class="math inline">\(u&lt;1\)</span>.</p>
-<p><span class="math display">\[
-\begin{proposition}\label{prop:closedform}
-    The optimal solution of the optimization problem \eqref{opt:general_form} with $u=1$ is
-    \begin{equation}
-    \mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,
-    \end{equation}
-    with
-    \begin{equation}
-    \mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},
-    \end{equation}
-    and
-    \begin{equation}
-    \mathcal{A} = \big\{j \big| \mu + q_j &lt; 0\big\},
-    \end{equation}
-    where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. 
-\end{proposition}\]</span> We refer to the iterative procedure of Proposition  as AS<span class="math inline">\(_{1}(\mathbf{w})\)</span> (Active-Set for <span class="math inline">\(u=1\)</span>).</p>
-<p><span class="math display">\[
-\begin{proposition}\label{prop:closedform_u}
-    The optimal solution of the optimization problem \eqref{opt:general_form} with $u&lt;1$ is
-    \begin{equation}
-    \mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,
-    \end{equation}
-    with 
-    \begin{equation}\label{eq:mu_u}
-    \mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},
-    \end{equation}
-    and
-    \begin{align}
-    \mathcal{B}_1 =&amp; \big\{j \big| \mu + q_j \leq -2u\big\},\\
-    \mathcal{B}_2 =&amp; \big\{j \big| -2u &lt; \mu + q_j &lt; 0\big\},
-    \end{align}
-    where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps.
-\end{proposition}\]</span> We refer to the iterative procedure of Proposition  as AS<span class="math inline">\(_u(\vq)\)</span> (Active-Set for general <span class="math inline">\(u&lt;1\)</span>).</p>
-<p>The iterative closed-form update algorithm is:</p>
+\]</span> and <span class="math inline">\(\mathbf{q}^{(k)}\in\mathbb{R}^N\)</span>.</p>
+<p>What differentiates the various tracking errors is the exact form of <span class="math inline">\(\mathbf{q}^{(k)}\)</span> that we need to compute at each iteration <span class="math inline">\(k\)</span> of the algorithm: <span class="math display">\[
+\begin{aligned}
+  \mathbf{q}_{\text{ETE}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}}(2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\mathbf{r}^b),\\
+  \mathbf{q}_{\text{DR}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}} (\frac{2}{T} 2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda\mathbf{d}_{p,u}^{(k)} + \frac{2}{T}\mathbf{X}^\top(\mathbf{y}^{(k)} - \mathbf{r}^b)),\\
+  \mathbf{q}_{\text{HETE}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_2)}}(2(\mathbf{L}_2 - \lambda_{\text{max}}^{(\mathbf{L}_2)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{r}^b),\\ 
+  \mathbf{q}_{\text{HDR}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_3)}}(2(\mathbf{L}_3 - \lambda_{\text{max}}^{(\mathbf{L}_3)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} +\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})(\mathbf{c}^{(k)} - \mathbf{r}^b)),
+\end{aligned}
+\]</span> where <span class="math inline">\(\lambda_{\text{max}}^{(\mathbf{A})}\)</span> denotes the maximum eigenvalue of a matrix <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\mathbf{I}\)</span> denotes the identity matrix, <span class="math inline">\(\text{Diag}(\mathbf{x})\)</span> is a diagonal matrix with the vector <span class="math inline">\(\mathbf{x}\)</span> at its principal diagonal, and<br />
+<span class="math display">\[
+\begin{aligned}
+  \mathbf{d}_{p,u}^{(k)} &amp; = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
+    d_{p,u}(w^{(k)}) &amp; = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
+    \mathbf{y}^{(k)} &amp; = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
+    \mathbf{a}^{(k)} &amp; = [a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,a([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+    a(x) &amp; = \begin{cases} 1 &amp;\quad |x|\leq M\\
+    \frac{M}{|x|} &amp;\quad |x| &gt; M,\end{cases}\\
+    \mathbf{b}^{(k)} &amp; = [b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,b([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+    b(x) &amp; = \begin{cases} \frac{M}{M - 2x} &amp;\quad x &lt; 0\\
+    1 &amp;\quad0\leq x\leq M\\
+    \frac{M}{x} &amp;\quad x &gt; M,\end{cases}\\
+    \mathbf{c}^{(k)} &amp; = [c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_1),\dots,c([\mathbf{r}^b - \mathbf{X}\mathbf{w}^{(k)}]_T)]^\top,\\
+    c(x) &amp; = \begin{cases} x &amp;\quad x &lt; 0\\
+    0 &amp;\quad x \geq 0,\end{cases}\\
+    \mathbf{L}_1 &amp; = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
+    \mathbf{L}_2 &amp; = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
+    \mathbf{L}_3 &amp; = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
+\end{aligned}
+\]</span></p>
+<p>The following propositions provide a waterfilling structured solution of the above optimization problem, considering two special cases, namely, <span class="math inline">\(u=1\)</span> and <span class="math inline">\(u&lt;1\)</span>.</p>
 <blockquote>
-<ol style="list-style-type: decimal">
-<li>Set <span class="math inline">\(k=0\)</span> and choose an initial point <span class="math inline">\(\mathbf{w}^{(0)}\)</span><br />
-</li>
-<li>Compute <span class="math inline">\(\mathbf{q}\)</span> according to the selected tracking error<br />
-</li>
-<li>Find the optimal solution <span class="math inline">\(\mathbf{w}^\star\)</span> with AS<span class="math inline">\(_{1|u}(\mathbf{q})\)</span> and set it equal to <span class="math inline">\(\mathbf{w}^{(k+1)}\)</span></li>
-<li><span class="math inline">\(k \gets k+1\)</span><br />
-</li>
-<li>Repeat steps 2-4 until convergence<br />
-</li>
-<li>Return <span class="math inline">\(\mathbf{w}^{(k)}\)</span></li>
-</ol>
+<p><strong>Proposition 1</strong> The optimal solution of the optimization problem (3) with <span class="math inline">\(u=1\)</span> is <span class="math display">\[\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,\]</span><br />
+with <span class="math display">\[\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},\]</span><br />
+and <span class="math display">\[\mathcal{A} = \big\{j \big| \mu + q_j &lt; 0\big\},\]</span><br />
+where <span class="math inline">\(\mathcal{A}\)</span> can be determined in <span class="math inline">\(O(\log(N))\)</span> steps. We refer to the iterative procedure of Proposition 1 as AS<span class="math inline">\(_{1}(\mathbf{q})\)</span> (Active-Set for <span class="math inline">\(u=1\)</span>).</p>
 </blockquote>
-<p>The initial point of the algorithm <span class="math inline">\(\mathbf{U}^{(0)}\)</span> is set by default to the <span class="math inline">\(q\)</span> leading standard eigenvectors, unless the user specifies otherwise. Internally, all the computations of <span class="math inline">\(\mathbf{G}^{(k)}\)</span> and <span class="math inline">\(\mathbf{H}^{(k)}\)</span> are done through the eigenvalue decomposition (EVD) of <span class="math inline">\(\mathbf{S}\)</span>. Since we can also retrieve the eigenvectors and eigenvalues of <span class="math inline">\(\mathbf{S}\)</span> through the singular value decomposition (SVD) of the data matrix <span class="math inline">\(\mathbf{X}\)</span>, with <span class="math inline">\(\mathbf{S} = \frac{1}{n-1}\mathbf{X}^\top\mathbf{X}\)</span>, it becomes possible to use as an input to <code>spEigen()</code> either the covariance matrix <span class="math inline">\(\mathbf{S}\)</span> or directly the data matrix <span class="math inline">\(\mathbf{X}\)</span>.</p>
+<blockquote>
+<p><strong>Proposition 2</strong> The optimal solution of the optimization problem (3) with <span class="math inline">\(u&lt;1\)</span> is <span class="math display">\[\mathbf{w}^\star = \left(\min\left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q}),u\mathbf{1}\right)\right)^+,\]</span><br />
+with <span class="math display">\[\mu = -\frac{\sum_{j\in\mathcal{B}_2}q_j + 2 - \text{card}(\mathcal{B}_1)2u}{\text{card}(\mathcal{B}_2)},\]</span><br />
+and <span class="math display">\[\begin{aligned}
+\mathcal{B}_1 &amp;= \big\{j \big| \mu + q_j \leq -2u\big\},\\
+\mathcal{B}_2 &amp;= \big\{j \big| -2u &lt; \mu + q_j &lt; 0\big\},
+\end{aligned}\]</span> where <span class="math inline">\(\mathcal{B}_1\)</span> and <span class="math inline">\(\mathcal{B}_2\)</span> can be determined in <span class="math inline">\(O(N\log(N))\)</span> steps. We refer to the iterative procedure of Proposition 2 as AS<span class="math inline">\(_u(\mathbf{q})\)</span> (Active-Set for general <span class="math inline">\(u&lt;1\)</span>).</p>
+</blockquote>
+<p>The iterative closed-form update algorithm is (where AS<span class="math inline">\(_{1|u}(\mathbf{q})\)</span> means AS<span class="math inline">\(_1(\mathbf{q})\)</span> or AS<span class="math inline">\(_u(\mathbf{q})\)</span>):</p>
+<blockquote>
+<p><strong>Algorithm 1</strong><br />
+1. Set <span class="math inline">\(k=0\)</span> and choose an initial point <span class="math inline">\(\mathbf{w}^{(0)}\)</span><br />
+2. Compute <span class="math inline">\(\mathbf{q}\)</span> according to the selected tracking error<br />
+3. Find the optimal solution <span class="math inline">\(\mathbf{w}^\star\)</span> with AS<span class="math inline">\(_{1|u}(\mathbf{q})\)</span> and set it equal to <span class="math inline">\(\mathbf{w}^{(k+1)}\)</span> <br /> 4. <span class="math inline">\(k \gets k+1\)</span><br />
+5. Repeat steps 2-4 until convergence<br />
+6. Return <span class="math inline">\(\mathbf{w}^{(k)}\)</span></p>
+</blockquote>
+<p>The initial point of the algorithm <span class="math inline">\(\mathbf{w}^{(0)}\)</span> is set by default to <span class="math inline">\(1/N\)</span>, unless the user specifies otherwise.</p>
 <p>Finally, note that the approximate problem is controlled by the parameter <span class="math inline">\(p\)</span>, and in particular, as <span class="math inline">\(p\rightarrow0\)</span> we get <span class="math inline">\(\rho_{p,u}\rightarrow\ell_0\)</span>. However, by setting small values to <span class="math inline">\(p\)</span>, it is likely that the algorithm will get stuck to a local minimum. To solve this issue we start with large values for <span class="math inline">\(p\)</span>, i.e., a “loose” approximation, and solve the corresponding optimization problem. Then, we sequentially decrease <span class="math inline">\(p\)</span>, i.e., we “tighten” the approximation, and solve the problem again using the previous solution as an initial point. In practice we are interested only in the last, “tightest” problem. For each problem that is solved (i.e., for fixed <span class="math inline">\(p\)</span>) we utilize an acceleration scheme that increases the convergence speed of the MM algorithm. For details, please refer to <span class="citation">[3]</span>.</p>
 </div>
 </div>
