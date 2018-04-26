@@ -3,12 +3,12 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     number_sections: yes
     toc: yes
@@ -105,7 +105,7 @@ $$
 $$
 \text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right)
 $$ 
-where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
+where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$ and 
 $$
 \phi(x) = \begin{cases}
 x^2 &\quad |x| \leq M\\
