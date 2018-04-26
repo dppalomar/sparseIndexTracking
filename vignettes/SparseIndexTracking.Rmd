@@ -3,12 +3,12 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     number_sections: yes
     toc: yes
@@ -65,7 +65,7 @@ $$
 $$
 where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. 
 
-The $\ell_0$-"norm" is approximated by the continuous and differentiable function (for $\mathbf{w} \geq \mathbf{0}$)
+The $\ell_0$-"norm" is approximated by the continuous and differentiable (for $w \geq 0$) function 
 $$
 \rho_{p,u}(w) = \frac{\log(1 + w/p)}{\log(1 + u/p)},
 $$
@@ -105,7 +105,7 @@ $$
 $$
 \text{HDR}(\mathbf{w}) = \frac{1}{T}\mathbf{1}^\top\boldsymbol{\phi}\left((\mathbf{r}^b-\mathbf{X}\mathbf{w})^+\right)
 $$ 
-where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$ and 
+where $\boldsymbol{\phi}(\mathbf{x}) = [\phi(x_1), \dots, \phi(x_T)]^\top$, and 
 $$
 \phi(x) = \begin{cases}
 x^2 &\quad |x| \leq M\\
@@ -115,7 +115,7 @@ $$
 with $M>0$ being the Huber parameter.
 
 
-Regardless of the selected tracking error measure, this problem can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm (with iterations denoted by $k$). It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
+Regardless of the selected tracking error measure, problem (2) can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm (with iterations denoted by $k$). It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
 $$
 \begin{array}{ll}
 \underset{\mathbf{w}}{\text{minimize}} & \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
@@ -159,7 +159,7 @@ $$
 \end{aligned}
 $$
 
-The following propositions provide a waterfilling structured solution of the above optimization problem, considering two special cases, namely, $u=1$ and $u<1$.
+The following propositions provide a waterfilling structured solution of problem (3), considering two special cases, namely, $u=1$ and $u<1$.
 
 > **Proposition 1** The optimal solution of the optimization problem (3) with $u=1$ is
   $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$	

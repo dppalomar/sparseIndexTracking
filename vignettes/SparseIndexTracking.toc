@@ -1,0 +1,5 @@
+\contentsline {section}{\numberline {1}Comparison with other packages}{1}{section.1}
+\contentsline {section}{\numberline {2}Usage of the package}{1}{section.2}
+\contentsline {section}{\numberline {3}Explanation of the algorithms}{1}{section.3}
+\contentsline {subsection}{\numberline {3.1}\texttt {spIndexTrack()}: Sparse portfolio construction}{1}{subsection.3.1}
+\contentsline {section}{References}{4}{section*.2}
