@@ -3,12 +3,13 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette    
     fig_caption: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
-  pdf_document:
+  bookdown::pdf_document2:
     fig_caption: yes
     number_sections: yes
     toc: yes
@@ -32,9 +33,10 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center"
 )
+#Help on bookdown: https://bookdown.org/yihui/bookdown/
 #rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "pdf_document")
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "rmarkdown::html_vignette")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::pdf_document2")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::html_document2")
 #tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
 ```
 
@@ -63,7 +65,7 @@ $$
  & \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
 \end{array} \qquad (1)
 $$
-where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. 
+where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio.
 
 The $\ell_0$-"norm" is approximated by the continuous and differentiable (for $w \geq 0$) function 
 $$
