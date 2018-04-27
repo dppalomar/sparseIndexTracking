@@ -3,17 +3,13 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  bookdown::html_book:
-    base_format: rmarkdown::html_vignette
-  bookdown::pdf_book:
-    base_format: rmarkdown::pdf_document
   bookdown::html_document2:
-  bookdown::pdf_document2:
-    fig_caption: yes    
+    base_format: rmarkdown::html_vignette
+    fig_caption: yes
     number_sections: yes
     toc: yes
     toc_depth: 2
-  rmarkdown::html_vignette:
+  bookdown::pdf_document2:
     fig_caption: yes
     number_sections: yes
     toc: yes
@@ -26,7 +22,7 @@ csl: ieee.csl
 bibliography: refs.bib
 vignette: >
   %\VignetteIndexEntry{Design of portfolio of Sstocks to track an index}
-  %\VignetteKeyword{sparse, portfolio, financial index}
+  %\VignetteKeyword{sparse, portfolio, financial index, tracking}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -37,29 +33,55 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center"
 )
-#rmarkdown::render("vignettes/test.Rmd", "pdf_document")
+#rmarkdown::render("vignettes/test.Rmd", "all")
 #rmarkdown::render("vignettes/test.Rmd", "bookdown::pdf_document2")
-#rmarkdown::render("vignettes/test.Rmd", "bookdown::pdf_book")
 #rmarkdown::render("vignettes/test.Rmd", "bookdown::html_document2")
-#rmarkdown::render("vignettes/test.Rmd", "bookdown::html_book")
-
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "rmarkdown::html_vignette")
 ```
 
 -----------
 This vignette illustrates the design of sparse portfolios that aim to track a financila index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
 
 
-# Comparison with other packages
+# Example of equation numbering and referencing with labels
+\begin{equation}
+\begin{array}{ll}
+\underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
+\textsf{subject to}
+ & \mathbf{w}^\top\mathbf{1}=1\\
+ & \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1},
+\end{array}
+(\#eq:shit)
+\end{equation}
+\noindent where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio. Example of referencing: \@ref(eq:shit)
 
 
-# Usage of the package
+# Example of theorems
 
+> **Proposition 1** The optimal solution of the optimization problem (3) with $u=1$ is
+  $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$	
+  with $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$	
+  and $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$	
+  where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. We refer to the iterative procedure of 
+  Proposition 1 as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
 
-# Explanation of the algorithms
+```{proposition, name = "Some name", label = "shit"}
+The optimal solution of the optimization problem (3) with $u=1$ is
+  $$\mathbf{w}^\star = \left(-\frac{1}{2}(\mu\mathbf{1} + \mathbf{q})\right)^+,$$	
+  with $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$	
+  and $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$	
+  where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. We refer to the iterative procedure of 
+  Proposition 1 as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
+```
 
-## `spIndexTrack()`: Sparse portfolio construction
+Example of referencing: Proposition \@ref(prp:shit)
 
+# Example of figures
+
+```{r shit2, fig.width = 5, fig.asp = 1, fig.cap = "Caption of figure"}
+plot(seq(10), type = "b")
+```
+
+Example referencing: Figure \@ref(fig:shit2)
 
 
 
