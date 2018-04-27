@@ -1,4 +1,5 @@
 source('spIndexTrack.R')
+library(xts)
 
 # parameters
 n <- 500 # number of assets
@@ -25,11 +26,20 @@ t <- runif(n)
 w_ind <- t/sum(t)
 r_b <- X %*% w_ind
 
+# load('data_2010_2015.RData')
+#
+# colNames <- colnames(lin_returns)
+# Xc <- coredata(lin_returns)
+# Xdf <- as.data.frame(lin_returns)
+# X <- as.matrix(lin_returns)
+#
+# r_b <- coredata(SP500)
+
 # algorithm
 lambda <- 5e-7
-w <- spIndexTrack(X, r_b, lambda, u = 0.5, measure = 'ete')
+w <- spIndexTrack(X, r_b, lambda, u = 0.5, measure = 'ete', hub = 0.05)
 
-sum(w > 1e-6)
+print(sum(w > 1e-6))
 
 matplot(seq(m), cbind(cumprod(1 + X %*% w), cumprod(1 + r_b)), type = 'l', xlab = 'Days', ylab = 'Wealth')
 legend("top", c('Portfolio', 'Index'), col = seq_len(2), cex=0.8, fill = seq_len(2))
