@@ -14,10 +14,8 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
+indent: yes
 graphics: yes
-header-includes: 
-  \setlength{\parindent}{12pt} 
-  \usepackage{graphicx}
 csl: ieee.csl
 bibliography: refs.bib
 vignette: >
@@ -43,6 +41,9 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 
 
 # Example of equation numbering and referencing with labels
+lalala
+
+lalala
 \begin{equation}
 \begin{array}{ll}
 \underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
