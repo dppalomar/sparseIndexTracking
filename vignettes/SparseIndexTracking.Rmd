@@ -3,10 +3,12 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  bookdown::html_document2:
-    base_format: rmarkdown::html_vignette
+  bookdown::html_document2:  
+    base_format: prettydoc::html_pretty
+    theme: cayman
+    highlight: vignette
     fig_caption: yes
-    number_sections: yes
+    number_sections: no
     toc: yes
     toc_depth: 2
   bookdown::pdf_document2:
@@ -14,14 +16,15 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-  rmarkdown::html_vignette: default
+indent: yes    
 graphics: yes
-header-includes: \setlength{\parindent}{12pt} \usepackage{graphicx}
 csl: ieee.csl
 bibliography: refs.bib
-vignette: "%\\VignetteIndexEntry{Design of portfolio of stocks to track an index}
-  \n%\\VignetteKeyword{sparse, portfolio, financial index, tracking} \n%\\VignetteEncoding{UTF-8}
-  \n%\\VignetteEngine{knitr::rmarkdown}\n"
+vignette: >
+  %\VignetteIndexEntry{Design of portfolio of stocks to track an index}
+  %\VignetteKeyword{sparse, portfolio, financial index, tracking}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r, echo = FALSE}
@@ -54,6 +57,7 @@ This vignette illustrates the design of sparse portfolios that aim to track a fi
 Assume that an index is composed of $N$ assets. We denote by $\mathbf{r}^b=[r_1^b,\dots,r_T^b]^\top\in\mathbb{R}^T$ and $\mathbf{X}=[\mathbf{r}_1,\dots,\mathbf{r}_T]^\top\in\mathbb{R}^{T\times N}$ the (arithmetic) net returns of the index and the $N$ assets in the past $T$ days, respectively, with $\mathbf{r}_t\in\mathbb{R}^N$ denoting the net returns of the $N$ assets at the $t$-th day.
 
 The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\in\mathbb{R}_+^N$, with $\mathbf{w}^\top\mathbf{1} = 1$, that tracks closely the index, i.e., $\mathbf{X}\mathbf{w} \approx \mathbf{r}^b$, based on [@BenFengPal2018]. The underlying optimization problem that is solved is
+
 \begin{equation}
 \begin{array}{ll}
 \underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\|\mathbf{w}\|_0\\
@@ -65,11 +69,13 @@ The goal of `spIndexTrack()` is the design of a (sparse) portfolio $\mathbf{w}\i
 \end{equation}
 \noindent where $\text{TE}(\mathbf{w})$ is a general tracking error (we will see specific tracking errors shortly), $\lambda$ is a regularization parameter that controls the sparsity of the portfolio, and $u$ is an upper bound on the weights of the portfolio.
 
-The $\ell_0$-"norm" is approximated by the continuous and differentiable (for $w \geq 0$) function 
+The $\ell_0$-"norm" is approximated by the continuous and differentiable (for $w \geq 0$) function
+
 \begin{equation}
 \rho_{p,u}(w) = \frac{\log(1 + w/p)}{\log(1 + u/p)},
 \end{equation}
-where $p>0$ is a parameter that controls the approximation. This leads to the following approximate problem:
+\noindent where $p>0$ is a parameter that controls the approximation. This leads to the following approximate problem:
+
 \begin{equation}
 \begin{array}{ll}
 \underset{\mathbf{w}}{\text{minimize}} & \text{TE}(\mathbf{w}) + \lambda\mathbf{1}^\top\boldsymbol{\rho}_{p,u}(\mathbf{w})\\
@@ -79,7 +85,7 @@ where $p>0$ is a parameter that controls the approximation. This leads to the fo
 \end{array}
 (\#eq:approx-form)
 \end{equation}
-where $\boldsymbol{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
+\noindent where $\boldsymbol{\rho}_{p,u}(\mathbf{w})=[\mathbf{\rho}_{p,u}(w_1),\dots,\rho_{p,u}(w_N)]^\top$.
 
 There are four available tracking errors $\text{TE}(\mathbf{w}$) in `spIndexTrack()`:
 
@@ -117,6 +123,7 @@ with $M>0$ being the Huber parameter.
 
 
 Regardless of the selected tracking error measure, problem \@ref(eq:approx-form) can be solved via Majorization-Minimization (MM) [@SunBabPal2018] with an iterative closed-form update algorithm (with iterations denoted by $k$). It can be shown that all of the above variations boil down to the iterative optimization of the following convex problem:
+
 \begin{equation}
 \begin{array}{ll}
 \underset{\mathbf{w}}{\text{minimize}} & \mathbf{w}^\top\mathbf{w} + {\mathbf{q}^{(k)}}^\top\mathbf{w}\\
@@ -124,7 +131,7 @@ Regardless of the selected tracking error measure, problem \@ref(eq:approx-form)
 \end{array} 
 (\#eq:MM-iterative-form)
 \end{equation}
-where 
+\noindent where 
 $$
 \mathcal{W}_{u} = \big\{\mathbf{w} \big| \mathbf{w}^\top\mathbf{1} = 1, \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1}\big\},
 $$
@@ -169,8 +176,6 @@ The optimal solution of the optimization problem \@ref(eq:MM-iterative-form) wit
   with $$\mu = -\frac{\sum_{i\in\mathcal{A}}q_i + 2}{\text{card}(\mathcal{A})},$$	
   and $$\mathcal{A} = \big\{j \big| \mu + q_j < 0\big\},$$	
   where $\mathcal{A}$ can be determined in $O(\log(N))$ steps. 
-  
-We refer to the iterative procedure of Proposition \@ref(prp:AS1) as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$).
 
 ```{proposition, name = "AS$_u$", label = "ASu"}
 The optimal solution of the optimization problem \@ref(eq:MM-iterative-form) with $u<1$ is
@@ -182,20 +187,17 @@ The optimal solution of the optimization problem \@ref(eq:MM-iterative-form) wit
 	\end{aligned}$$	
   where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps. 
 ```  
-We refer to the iterative procedure of Proposition \@ref(prp:ASu) as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
+We refer to the iterative procedure of Proposition \@ref(prp:AS1) as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$) and of Proposition \@ref(prp:ASu) as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
 
-
-The iterative closed-form update algorithm is (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$):  
+The iterative closed-form update algorithm is given in Algorithm 1 (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$).
 
 > **Algorithm 1**  
-  1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$  
+  1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$ (by default set to $\mathbf{w}^{(0)} = \frac{1}{N}\mathbf{1}$)  
   2. Compute $\mathbf{q}$ according to the selected tracking error  
-  3. Find the optimal solution $\mathbf{w}^\star$ with AS$_{1|u}(\mathbf{q})$ and set it equal to $\mathbf{w}^{(k+1)}$ <br />
+  3. Find the optimal solution $\mathbf{w}^\star$ with AS$_{1|u}(\mathbf{q})$ and set it equal to $\mathbf{w}^{(k+1)}$  
   4. $k \gets k+1$  
   5. Repeat steps 2-4 until convergence  
   6. Return $\mathbf{w}^{(k)}$  
-
-The initial point of the algorithm is set by default to $\mathbf{w}^{(0)} = \frac{1}{N}\mathbf{1}$, unless the user specifies otherwise. 
 
 Finally, note that the approximate problem is controlled by the parameter $p$, and in particular, as $p\rightarrow0$ we get  $\rho_{p,u}\rightarrow\ell_0$. However, by setting small values to $p$, it is likely that the algorithm will get stuck to a local minimum. To solve this issue we start with large values for $p$, i.e., a "loose" approximation, and solve the corresponding optimization problem. Then, we sequentially decrease $p$, i.e., we "tighten" the approximation, and solve the problem again using the previous solution as an initial point. In practice we are interested only in the last, "tightest" problem. For each problem that is solved (i.e., for fixed $p$) we utilize an acceleration scheme that increases the convergence speed of the MM algorithm. For details, please refer to [@Varadhan2008].   
 

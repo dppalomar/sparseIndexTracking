@@ -1,0 +1,7 @@
+---
+header-includes:
+  \setlength{\parindent}{12pt}
+  \setlength{\parskip}{0em}
+  \usepackage{graphicx}
+graphics: yes
+---

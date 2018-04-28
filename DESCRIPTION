@@ -30,5 +30,6 @@ Suggests:
     knitr,
     rmarkdown,
     bookdown,
+    prettydoc,
     testthat
 VignetteBuilder: knitr

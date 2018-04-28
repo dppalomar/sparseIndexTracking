@@ -3,8 +3,10 @@ title: "Design of Portfolio of Stocks to Track an Index"
 author: "Konstantinos Benidis and Daniel P. Palomar"
 date: "`r Sys.Date()`"
 output:
-  bookdown::html_document2:
-    base_format: rmarkdown::html_vignette
+  bookdown::html_document2:  
+    base_format: prettydoc::html_pretty
+    theme: leonids
+    highlight: github
     fig_caption: yes
     number_sections: yes
     toc: yes
@@ -15,7 +17,6 @@ output:
     toc: yes
     toc_depth: 2
 indent: yes
-graphics: yes
 csl: ieee.csl
 bibliography: refs.bib
 vignette: >
