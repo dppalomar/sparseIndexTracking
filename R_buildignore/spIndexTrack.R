@@ -284,6 +284,12 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         flg <- 0
       }
     }
+
+    # Add names
+    if (is.xts(X) || is.data.frame(X)){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
+    }
     return(weights = w)
   }
 }
