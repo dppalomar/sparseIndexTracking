@@ -11,10 +11,15 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(
+library(knitr)
+opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-"
+  fig.path = "man/figures/README-",
+  fig.align = "center",
+  fig.retina = 2,
+  out.width = "75%",
+  dpi = 96
 )
 ```
 
@@ -57,6 +62,10 @@ citation("sparseIndexTracking")
 ```
 
 
+## Vignette
+For more detailed information, please check the vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
+
+
 ## Usage of `spEigen()`
 
 We start by loading the package and generating synthetic data with sparse eigenvectors:
@@ -88,7 +97,7 @@ R <- V %*% diag(lmd) %*% t(V)
 X <- MASS::mvrnorm(n, rep(0, m), R)  # random data with underlying sparse structure
 ```
 Then, we estimate the covariance matrix with `cov(X)` and compute its sparse eigenvectors:
-```{r}
+```{r, cache = TRUE}
 # computation of sparse eigenvectors
 res_standard <- eigen(cov(X))
 res_sparse <- spEigen(cov(X), q)
@@ -102,7 +111,7 @@ abs(diag(t(res_sparse$vectors) %*% V[, 1:q]))    #for sparse estimated eigenvect
 ```
 
 Finally, the following plot shows the sparsity pattern of the eigenvectors (sparse computation vs. classical computation):
-```{r, echo = FALSE, fig.height = 7, fig.width = 7}
+```{r, echo = FALSE, fig.width = 7, fig.height = 7}
 par(mfcol = c(3, 2))
 plot(res_sparse$vectors[, 1]*sign(res_sparse$vectors[1, 1]), 
      main = "First sparse eigenvector", xlab = "index", ylab = "", type = "h")
@@ -154,3 +163,9 @@ norm(res_sparse2$cov - R, type = 'F') #for covariance with sparse eigenvectors
 ```
 
 
+## Links
+Package: [GitHub](https://github.com/dppalomar/sparseIndexTracking).
+
+README file: [GitHub-readme](https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html).
+
+Vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
