@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:  
     base_format: prettydoc::html_pretty
-    theme: cayman
+    theme: tactile
     highlight: vignette
     fig_caption: yes
     number_sections: no
@@ -16,8 +16,7 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 2
-indent: yes    
-graphics: yes
+indent: yes
 csl: ieee.csl
 bibliography: refs.bib
 vignette: >
@@ -28,20 +27,25 @@ vignette: >
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(
+library(knitr)
+opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.align = "center"
+  fig.align = "center",
+  fig.retina = 2,
+  out.width = "75%",
+  dpi = 96
 )
+knit_hooks$set(pngquant = hook_pngquant)
 #Help on bookdown: https://bookdown.org/yihui/bookdown/
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::pdf_document2")
-#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::html_document2")
-#tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
+#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "all")
+#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::pdf_document2")
+#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::html_document2")
+#tools::compactPDF("vignettes/SparseIndexTracking-vignette.pdf", gs_quality = "ebook")
 ```
 
 -----------
-This vignette illustrates the design of sparse portfolios that aim to track a financila index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
+> This vignette illustrates the design of sparse portfolios that aim to track a financila index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
 
 
 # Comparison with other packages
@@ -187,9 +191,7 @@ The optimal solution of the optimization problem \@ref(eq:MM-iterative-form) wit
 	\end{aligned}$$	
   where $\mathcal{B}_1$ and $\mathcal{B}_2$ can be determined in $O(N\log(N))$ steps. 
 ```  
-We refer to the iterative procedure of Proposition \@ref(prp:AS1) as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$) and of Proposition \@ref(prp:ASu) as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$).
-
-The iterative closed-form update algorithm is given in Algorithm 1 (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$).
+We refer to the iterative procedure of Proposition \@ref(prp:AS1) as AS$_{1}(\mathbf{q})$ (Active-Set for $u=1$) and of Proposition \@ref(prp:ASu) as AS$_u(\mathbf{q})$ (Active-Set for general $u<1$). The iterative closed-form update algorithm is given in Algorithm 1 (where AS$_{1|u}(\mathbf{q})$ means AS$_1(\mathbf{q})$ or AS$_u(\mathbf{q})$).
 
 > **Algorithm 1**  
   1. Set $k=0$ and choose an initial point $\mathbf{w}^{(0)}$ (by default set to $\mathbf{w}^{(0)} = \frac{1}{N}\mathbf{1}$)  
