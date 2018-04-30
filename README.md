@@ -1,17 +1,38 @@
+---
+output:
+  html_document:
+    variant: markdown_github
+    keep_md: true
+  md_document:
+    variant: markdown_github
+---
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-sparseIndexTracking
-===================
 
-Computation of sparse eigenvectors of a matrix (aka sparse PCA) with running time 2-3 orders of magnitude lower than existing methods and better final performance in terms of recovery of sparsity pattern and estimation of numerical values.
 
-Can handle covariance matrices as well as data matrices with real or complex-valued entries. Different levels of sparsity can be specified for each individual ordered eigenvector and the method is robust in parameter selection. See vignette for a detailed documentation and comparison, with several illustrative examples.
 
-The package is based on the paper: K. Benidis, Y. Feng, and D. P. Palomar, “Sparse Portfolios for High-Dimensional Financial Index Tracking,” IEEE Trans. on Signal Processing, vol. 66, no. 1, pp. 155-170, Jan. 2018 <https://doi.org/10.1109/TSP.2017.2762286>.
+# sparseIndexTracking
 
-Installation
-------------
+Computation of sparse eigenvectors of a matrix (aka sparse PCA)
+    with running time 2-3 orders of magnitude lower than existing methods and
+    better final performance in terms of recovery of sparsity pattern and 
+    estimation of numerical values. 
+    
+Can handle covariance matrices as well as 
+    data matrices with real or complex-valued entries. Different levels of 
+    sparsity can be specified for each individual ordered eigenvector and the 
+    method is robust in parameter selection. See vignette for a detailed 
+    documentation and comparison, with several illustrative examples. 
+    
+The package is based on the paper:
+    K. Benidis, Y. Feng, and D. P. Palomar, “Sparse Portfolios for High-Dimensional 
+    Financial Index Tracking,” IEEE Trans. on Signal Processing, vol. 66, no. 1, 
+    pp. 155-170, Jan. 2018 <https://doi.org/10.1109/TSP.2017.2762286>.
 
-``` r
+
+## Installation
+
+```r
 # Installation from CRAN
 install.packages("sparseIndexTracking")
 
@@ -29,17 +50,16 @@ package?sparseIndexTracking
 citation("sparseIndexTracking")
 ```
 
-Vignette
---------
 
+## Vignette
 For more detailed information, please check the vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
 
-Usage of `spEigen()`
---------------------
+
+## Usage of `spEigen()`
 
 We start by loading the package and generating synthetic data with sparse eigenvectors:
 
-``` r
+```r
 library(sparseEigen)
 set.seed(42)
 
@@ -66,10 +86,9 @@ R <- V %*% diag(lmd) %*% t(V)
 # with the constructed covariance matrix
 X <- MASS::mvrnorm(n, rep(0, m), R)  # random data with underlying sparse structure
 ```
-
 Then, we estimate the covariance matrix with `cov(X)` and compute its sparse eigenvectors:
 
-``` r
+```r
 # computation of sparse eigenvectors
 res_standard <- eigen(cov(X))
 res_sparse <- spEigen(cov(X), q)
@@ -77,7 +96,7 @@ res_sparse <- spEigen(cov(X), q)
 
 We can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors (the closer to 1 the better):
 
-``` r
+```r
 # show inner product between estimated eigenvectors and originals
 abs(diag(t(res_standard$vectors) %*% V[, 1:q]))  #for standard estimated eigenvectors
 #> [1] 0.9215392 0.9194898 0.9740871
@@ -85,23 +104,25 @@ abs(diag(t(res_sparse$vectors) %*% V[, 1:q]))    #for sparse estimated eigenvect
 #> [1] 0.9986937 0.9988146 0.9972078
 ```
 
-Finally, the following plot shows the sparsity pattern of the eigenvectors (sparse computation vs. classical computation): <img src="man/figures/README-unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" />
+Finally, the following plot shows the sparsity pattern of the eigenvectors (sparse computation vs. classical computation):
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" />
 
-Usage of `spEigenCov()`
------------------------
+## Usage of `spEigenCov()`
 
 The function `spEigenCov()` requires more samples than the dimension (otherwise some regularization is required). Therefore, we generate data as previously with the only difference that we set the number of samples to be `n=600`.
 
+
+
 Then, we compute the covariance matrix through the joint estimation of sparse eigenvectors and eigenvalues:
 
-``` r
+```r
 # computation of covariance matrix
 res_sparse2 <- spEigenCov(cov(X), q)
 ```
 
 Again, we can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors:
 
-``` r
+```r
 # show inner product between estimated eigenvectors and originals
 abs(diag(t(res_sparse2$vectors[, 1:q]) %*% V[, 1:q]))    #for sparse estimated eigenvectors
 #> [1] 0.9997197 0.9996029 0.9992848
@@ -109,7 +130,7 @@ abs(diag(t(res_sparse2$vectors[, 1:q]) %*% V[, 1:q]))    #for sparse estimated e
 
 Finally, we can compute the error of the estimated covariance matrix (sparse eigenvector computation vs. classical computation):
 
-``` r
+```r
 # show error between estimated and true covariance 
 norm(cov(X) - R, type = 'F') #for sample covariance matrix
 #> [1] 48.42514
@@ -117,9 +138,8 @@ norm(res_sparse2$cov - R, type = 'F') #for covariance with sparse eigenvectors
 #> [1] 25.74865
 ```
 
-Links
------
 
+## Links
 Package: [GitHub](https://github.com/dppalomar/sparseIndexTracking).
 
 README file: [GitHub-readme](https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html).

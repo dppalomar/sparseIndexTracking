@@ -1,11 +1,10 @@
 ---
-title: "sparseIndexTracking"
 output:
-  md_document:
-    variant: markdown_github
   html_document:
     variant: markdown_github
     keep_md: true
+  md_document:
+    variant: markdown_github
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -69,7 +68,7 @@ For more detailed information, please check the vignette: [GitHub-html-vignette]
 ## Usage of `spEigen()`
 
 We start by loading the package and generating synthetic data with sparse eigenvectors:
-```{r}
+```{r, cache = TRUE}
 library(sparseEigen)
 set.seed(42)
 
@@ -138,13 +137,13 @@ lines(V[, 3]*sign(V[2*sp_card+1, 3]), col = "red")
 
 The function `spEigenCov()` requires more samples than the dimension (otherwise some regularization is required). Therefore, we generate data as previously with the only difference that we set the number of samples to be `n=600`.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, cache = TRUE}
 n <- 600  # number of samples
 X <- MASS::mvrnorm(n, rep(0, m), R)  # random data with underlying sparse structure
 ```
 
 Then, we compute the covariance matrix through the joint estimation of sparse eigenvectors and eigenvalues:
-```{r}
+```{r, cache = TRUE}
 # computation of covariance matrix
 res_sparse2 <- spEigenCov(cov(X), q)
 ```
