@@ -9,9 +9,14 @@
 #' \code{\link{xxx}}, \code{\link{xxx}}
 #'
 #' @section Help:
-#' For a quick help see the README \url{https://cran.r-project.org/web/packages/sparseIndexTracking/README.html}.
+#' For a quick help see the README:
+#' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html}{GitHub-README} and
+#' \href{https://cran.r-project.org/web/packages/sparseIndexTracking/README.html}{CRAN-README}.
 #'
-#' For more details see the vignette \url{https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseEigenvectors.pdf}.
+#' For more details see the vignette:
+#' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html}{GitHub-html-vignette},
+#' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf}{GitHub-pdf-vignette}, and
+#' \href{https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf}{CRAN-pdf-vignette}.
 #'
 #' @author Konstantinos Benidis and Daniel P. Palomar
 #'
