@@ -1,46 +1,63 @@
 source('spIndexTrack.R')
-library(xts)
 
-# parameters
-n <- 500 # number of assets
-m <- 200 # days
+load('data_2010_2015.RData')
 
-# artificial data
-mu <- rnorm(n) / 252
-D <- 2 * diag(runif(n)) / sqrt(252)
+X_train <- lin_returns[1:126,]
+X_test <- lin_returns[127:252,]
+r_train <- SP500[1:126]
+r_test <- SP500[127:252]
+dates_test <- dates[127:252]
 
-C <- matrix(rep(0, n*n), nrow = n)
-for (i in 1:n) {
-  for (j in 1:n) {
-    C[i, j] <- 0.7^(abs(i-j))
-  }
-}
 
-Sigma <- D %*% C %*% D
+#### Algorithms
 
-# asset returns
-X <- MASS::mvrnorm(n = m, mu, Sigma)
+# ETE
+lambda <- 1e-7
+w_ete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='ete')
 
-# index
-t <- runif(n)
-w_ind <- t/sum(t)
-r_b <- X %*% w_ind
+cat('Number of assets used:', sum(w_ete > 1e-6))
 
-# load('data_2010_2015.RData')
-#
-# colNames <- colnames(lin_returns)
-# Xc <- coredata(lin_returns)
-# Xdf <- as.data.frame(lin_returns)
-# X <- as.matrix(lin_returns)
-#
-# r_b <- coredata(SP500)
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_ete), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (ETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
 
-# algorithm
-lambda <- 5e-7
-w <- spIndexTrack(X, r_b, lambda, u = 0.5, measure = 'ete', hub = 0.05)
 
-print(sum(w > 1e-6))
+# DR
+lambda <- 2e-8
+w_dr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='dr')
 
-matplot(seq(m), cbind(cumprod(1 + X %*% w), cumprod(1 + r_b)), type = 'l', xlab = 'Days', ylab = 'Wealth')
-legend("top", c('Portfolio', 'Index'), col = seq_len(2), cex=0.8, fill = seq_len(2))
+cat('Number of assets used:', sum(w_dr > 1e-6))
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_dr), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (DR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+
+
+# HETE
+lambda <- 8e-8
+w_hete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hete', hub=0.05)
+
+cat('Number of assets used:', sum(w_hete > 1e-6))
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hete), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (HETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+
+
+# HDR
+lambda <- 2e-8
+w_hdr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hdr', hub=0.05)
+
+cat('Number of assets used:', sum(w_hdr > 1e-6))
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hdr), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (HDR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
 grid()
