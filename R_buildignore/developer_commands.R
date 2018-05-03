@@ -10,7 +10,7 @@ library(sparseIndexTracking)
 help(package="sparseIndexTracking")
 package?sparseIndexTracking
 ?spIndexTrack
-
+?data(data_1999_2005)
 
 
 

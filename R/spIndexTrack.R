@@ -18,7 +18,10 @@
 #' K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
 #' \emph{IEEE Transactions on Signal Processing}, vol. 66, no. 1, pp. 155-170, Jan. 2018.
 #' @export
-spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = NULL, thres = 1e-9) {
+spIndexTrack <- function(X, r, lambda, u = 1,
+                         measure = c('ete', 'dr', 'hete', 'hdr'),
+                         hub = NULL, w0 = NULL, thres = 1e-9) {
+  measure <- match.arg(measure)
   max_iter <- 1000 # maximum MM iterations
 
   ######## error control  #########
@@ -27,7 +30,6 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
   m <- nrow(X)
   if (n == 1) stop("Data is univariate!")
   if (anyNA(X) || anyNA(r) || anyNA(lambda) || anyNA(u)) stop("This function cannot handle NAs.")
-  if ((measure != 'ete') && (measure != 'dr') && (measure != 'hete') && (measure != 'hdr')) stop("The input argument 'measure' should be 'ete', 'dr', 'hete', or 'dr'.")
   if (((measure == 'hete') || (measure == 'hdr')) && ((is.null(hub)) || (hub <= 0))) stop("The input argument 'hub' should be positive.")
   if (u <= 0) stop("The input argument 'u' should be positive.")
   #################################

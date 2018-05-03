@@ -29,7 +29,8 @@ RoxygenNote: 6.0.1
 Suggests: 
     knitr,
     rmarkdown,
-    bookdown,
-    prettydoc,
     testthat
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr,
+    bookdown,
+    prettydoc
