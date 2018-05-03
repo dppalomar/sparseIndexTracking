@@ -91,6 +91,15 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         flg <- 0
       }
     }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
+    }
     return(weights = w)
   }
 
@@ -152,6 +161,15 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         }
         flg <- 0
       }
+    }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
     }
     return(weights = w)
   }
@@ -221,8 +239,12 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
       }
     }
 
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
     # Add names
-    if (is.xts(X) || is.data.frame(X)){
+    if (!is.null(colnames(X))){
       w <- as.data.frame(w)
       rownames(w) <- colnames(X)
     }
@@ -290,6 +312,16 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         }
         flg <- 0
       }
+    }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    # Add names
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
     }
     return(weights = w)
   }

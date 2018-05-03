@@ -17,7 +17,7 @@ w_ete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='ete')
 
 cat('Number of assets used:', sum(w_ete > 1e-6))
 
-matplot(dates_test, cbind(cumprod(1 + X_test %*% w_ete), cumprod(1 + r_test)),
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)),
         type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
 axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
 legend("topleft", c('Portfolio (ETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
@@ -30,7 +30,7 @@ w_dr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='dr')
 
 cat('Number of assets used:', sum(w_dr > 1e-6))
 
-matplot(dates_test, cbind(cumprod(1 + X_test %*% w_dr), cumprod(1 + r_test)),
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_dr$w), cumprod(1 + r_test)),
         type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
 axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
 legend("topleft", c('Portfolio (DR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
@@ -43,7 +43,7 @@ w_hete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hete', hub=0.05
 
 cat('Number of assets used:', sum(w_hete > 1e-6))
 
-matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hete), cumprod(1 + r_test)),
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hete$w), cumprod(1 + r_test)),
         type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
 axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
 legend("topleft", c('Portfolio (HETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
@@ -56,7 +56,7 @@ w_hdr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hdr', hub=0.05)
 
 cat('Number of assets used:', sum(w_hdr > 1e-6))
 
-matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hdr), cumprod(1 + r_test)),
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)),
         type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
 axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
 legend("topleft", c('Portfolio (HDR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')

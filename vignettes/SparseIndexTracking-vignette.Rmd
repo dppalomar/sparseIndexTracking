@@ -52,7 +52,79 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 
 # Usage of the package
+We start by loading the package and real data of the index S&P 500 and its underlying assets. 
+```{r}
+library(sparseIndexTracking)
+# load('data/data_2010_2015.RData')
+```
+The file `data_2010_2015.RData` contains three quantities:
 
+> 1. `lin_returns`: A $T\times N$ array with the daily linear returns of the $N$ assets that were in the index during the period 2010-2015 (total $T$ trading days)
+2. `SP500`: A $T\times 1$ array with the daily linear returns of the index S\&P 500 during the period 2010-2015
+3. `dates`: A $T\times 1$ array with the actual dates of the trading days of the period 2010-2015 
+
+Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (around 126 days) as the training window, and the subsequent six months as the testing window.
+```{r}
+X_train <- lin_returns[1:126,]
+X_test <- lin_returns[127:252,]
+r_train <- SP500[1:126]
+r_test <- SP500[127:252]
+dates_test <- dates[127:252]
+```
+
+Now, we use the four modes of the `spIndexTracking()` algorithm to design our portfolios.
+```{r}
+# ETE
+lambda <- 1e-7
+w_ete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='ete')
+cat('Number of assets used:', sum(w_ete > 1e-6))
+
+# DR
+lambda <- 2e-8
+w_dr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='dr')
+cat('Number of assets used:', sum(w_dr > 1e-6))
+
+# HETE
+lambda <- 8e-8
+w_hete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hete', hub=0.05)
+cat('Number of assets used:', sum(w_hete > 1e-6))
+
+# HDR
+lambda <- 2e-8
+w_hdr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hdr', hub=0.05)
+cat('Number of assets used:', sum(w_hdr > 1e-6))
+```
+
+Finally, we plot the actual value of the index in the testing window in comparison with the values of the designed portfolios.
+```{r, fig.height = 7, fig.width = 7}
+par(mfcol = c(4, 1))
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (ETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_dr$w), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (DR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hete$w), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (HETE)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+
+matplot(dates_test, cbind(cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)),
+        type = 'l', xlab = 'Days', ylab = 'Wealth', xaxt='n')
+axis.Date(1, at=dates_test, format='%b %y', cex.axis = .7)
+legend("topleft", c('Portfolio (HDR)', 'S&P 500'), col = seq_len(2), fill=seq_len(2), cex=0.8, bty='n')
+grid()
+```
+In the above examples we used a single training and testing window. In practice, we need to perform this task sequentially for many windows in order to assess an algorithm or to distinguish the differences between the various tracking errors. In the following figures, we have applied the four modes of the algorithm in the index S&P 500 considering different periods and different training and testing window lengths.  
+
+TO ADD PLOTS - HOW MANY?
 
 # Explanation of the algorithms
 
