@@ -58,6 +58,7 @@ library(sparseIndexTracking)
 # load('data/data_2010_2015.RData')
 ```
 The file `data_2010_2015.RData` contains three quantities:
+[Benidis: this is totally wrong. They are xts, you don't need the field dates. And read my email about the file having only one object (a list) with two elements: X and SP500. BTW, I wouldn't call X lin_returns because SP500 is also lin_returns, so just use X and SP500.]
 
 > 1. `lin_returns`: A $T\times N$ array with the daily linear returns of the $N$ assets that were in the index during the period 2010-2015 (total $T$ trading days)
 2. `SP500`: A $T\times 1$ array with the daily linear returns of the index S\&P 500 during the period 2010-2015

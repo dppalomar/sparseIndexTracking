@@ -4,15 +4,15 @@
 \alias{spIndexTrack}
 \title{Sparse Index Tracking}
 \usage{
-spIndexTrack(X, r, lambda, u = 1, measure = "ete", hub = NULL,
-  w0 = NULL, thres = 1e-09)
+spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete", "hdr"),
+  hub = NULL, w0 = NULL, thres = 1e-09)
 }
 \arguments{
 \item{X}{m-by-n matrix of net returns (m samples, n assets).}
 
 \item{r}{m dimensional vector of the net returns of the index.}
 
-\item{lambda}{sparsity weight factor. Any nonnegative number (suggested range \code{[10^{-7},10^{-3}]}).}
+\item{lambda}{sparsity weight factor. Any nonnegative number (suggested range \code{[10^{-8},10^{-6}]}).}
 
 \item{u}{upper bound of the weights.Default value \code{u <- 1}, i.e., no effective upper bound.}
 
