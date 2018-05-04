@@ -91,6 +91,15 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         flg <- 0
       }
     }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
+    }
     return(weights = w)
   }
 
@@ -113,8 +122,8 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         k <- k + 1
 
         # Acceleration double step
-        w1 <- drMMupdate(w0, X, r, B, b, Lmax_A, lambda, p, c1, u)
-        w2 <- drMMupdate(w1, X, r, B, b, Lmax_A, lambda, p, c1, u)
+        w1 <- drMMupdate(w0, X, r, B, b, Lmax_A, lambda, p, c1, u, m)
+        w2 <- drMMupdate(w1, X, r, B, b, Lmax_A, lambda, p, c1, u, m)
         R <- w1 - w0
         U <- w2 - w1 - R
         a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
@@ -153,6 +162,15 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         flg <- 0
       }
     }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
+    }
     return(weights = w)
   }
 
@@ -169,8 +187,8 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         k <- k + 1
 
         # Acceleration double step(w, X, r, lambda, p, c1, m, n, hub, u)
-        w1 <- eteHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
-        w2 <- eteHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
+        w1 <- heteMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
+        w2 <- heteMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
         R <- w1 - w0
         U <- w2 - w1 - R
         a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
@@ -216,8 +234,19 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
             break
           }
         }
+
         flg <- 0
       }
+    }
+
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
+    # Add names
+    if (!is.null(colnames(X))){
+      w <- as.data.frame(w)
+      rownames(w) <- colnames(X)
     }
     return(weights = w)
   }
@@ -234,8 +263,8 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
         k <- k + 1
 
         # Acceleration double step
-        w1 <- drHubMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
-        w2 <- drHubMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
+        w1 <- hdrMMupdate(w0, X, r, lambda, p, c1, m, n, hub, u)
+        w2 <- hdrMMupdate(w1, X, r, lambda, p, c1, m, n, hub, u)
         R <- w1 - w0
         U <- w2 - w1 - R
         a <- max(min(-norm(R, type = "2") / norm(U, type = "2"), -1), -300)
@@ -285,8 +314,12 @@ spIndexTrack <- function(X, r, lambda, u = 1, measure = 'ete', hub = NULL, w0 = 
       }
     }
 
+    # Threshold
+    w[w < thres] <- 0
+    w <- w / sum(w)
+
     # Add names
-    if (is.xts(X) || is.data.frame(X)){
+    if (!is.null(colnames(X))){
       w <- as.data.frame(w)
       rownames(w) <- colnames(X)
     }
@@ -306,7 +339,7 @@ eteMMupdate <- function(w, B, b, Lmax_A, lambda, p, c1, u) {
 
 
 # dr MM update at each iteration
-drMMupdate <- function(w, X, r, B, b, Lmax_A, lambda, p, c1, u) {
+drMMupdate <- function(w, X, r, B, b, Lmax_A, lambda, p, c1, u, m) {
   h <- pmin(r - X %*% w, 0)
   d <- lambda / ((p + abs(w)) * c1)
   c <- B %*% w + 1/Lmax_A * (b + d + 2/m * t(X) %*% h)
@@ -315,8 +348,8 @@ drMMupdate <- function(w, X, r, B, b, Lmax_A, lambda, p, c1, u) {
 }
 
 
-# ete-hub MM update at each iteration
-eteHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
+# hete MM update at each iteration
+heteMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
   d <- lambda / ((p + abs(w)) * c1)
   tmp <- r - X %*% w
   alpha <- rep(1, m)
@@ -331,8 +364,8 @@ eteHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
 }
 
 
-# dr-hub MM update at each iteration
-drHubMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
+# hdr MM update at each iteration
+hdrMMupdate <- function(w, X, r, lambda, p, c1, m, n, hub, u) {
   d <- lambda / ((p + abs(w)) * c1)
 
   tmp <- r - X %*% w
