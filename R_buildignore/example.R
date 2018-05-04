@@ -27,7 +27,7 @@ legend("topleft", c('Portfolio (ETE)', 'S&P 500'), col = seq_len(2), fill=seq_le
 grid()
 
 # nice plot with xts (Benidis, note this!)
-plot(cbind("portfolio" = cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)), legend.loc = "topleft", main = "Cumulative P&L")
+plot(cbind("PortfolioETE" = cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)), legend.loc = "topleft", main = "Cumulative P&L")
 
 
 # DR
