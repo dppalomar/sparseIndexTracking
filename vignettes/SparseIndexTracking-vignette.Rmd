@@ -53,7 +53,7 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 # Usage of the package
 We start by loading the package and real data of the index S&P 500 and its underlying assets. 
-```{r, message=FALSE}
+```{r, message = FALSE}
 library(sparseIndexTracking)
 library(xts)
 data(data_2010_2015)
@@ -63,8 +63,8 @@ SP500 <- data_2010_2015[[2]]
 ```
 The file `data_2010_2015.RData` contains a list of two xts objects:
 
-> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the period 2010-2015 (total $T$ trading days)
-2. `SP500`: A $T\times 1$ xts with the daily linear returns of the index S\&P 500 during the period 2010-2015
+> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the period   2010-2015 (total $T$ trading days)
+  2. `SP500`: A $T\times 1$ xts with the daily linear returns of the index S\&P 500 during the period 2010-2015
 
 Note that we use xts objects just for illustration purposes. The function `spIndexTracking()` can be further used with simple data arrays or dataframes.
 
@@ -77,25 +77,21 @@ r_test <- SP500[127:252]
 ```
 
 Now, we use the four modes of the `spIndexTracking()` algorithm to design our portfolios.
-```{r}
+```{r, cache = TRUE}
 # ETE
-lambda <- 1e-7
-w_ete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='ete')
+w_ete <- spIndexTrack(X_train, r_train, lambda = 1e-7, u = 0.5, measure = 'ete')
 cat('Number of assets used:', sum(w_ete > 1e-6))
 
 # DR
-lambda <- 2e-8
-w_dr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='dr')
+w_dr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'dr')
 cat('Number of assets used:', sum(w_dr > 1e-6))
 
 # HETE
-lambda <- 8e-8
-w_hete <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hete', hub=0.05)
+w_hete <- spIndexTrack(X_train, r_train, lambda = 8e-8, u = 0.5, measure = 'hete', hub = 0.05)
 cat('Number of assets used:', sum(w_hete > 1e-6))
 
 # HDR
-lambda <- 2e-8
-w_hdr <- spIndexTrack(X_train, r_train, lambda, u=0.5, measure='hdr', hub=0.05)
+w_hdr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'hdr', hub = 0.05)
 cat('Number of assets used:', sum(w_hdr > 1e-6))
 ```
 
@@ -118,16 +114,16 @@ Ideally, the ETE and HETE portfolios should have Excess P&L close to zero since 
 All of above can be observed in the following figures where we applied the four modes of the algorithm in the index S&P 500 considering three different periods. All the constructed portfolios consist of 40 assets, the training and testing windows were set to 6 months and 1 month, respectively, while monthly returns were used. The upper plot of each period (Normalized P&L) shows the wealth of the index and the four portfolios, which are normalized to the index value each time they are rebalanced. The lower plot of each period (Excess P&L) shows the cumulative difference of the portfolios and the index due to normalization, i.e., it is equivalent to a second account that keeps track of our excess profits or losses.    
 
 
-```{r echo=FALSE, out.width='80%', fig.cap = "Dot-com bubble."}
-knitr::include_graphics('Figures/per1_126_22_hub4_w.png', auto_pdf = TRUE)
+```{r, echo = FALSE, out.width = '80%', fig.cap = "Dot-com bubble."}
+knitr::include_graphics('figures/per1_126_22_hub4_w.png', auto_pdf = TRUE)
 ```
 
-```{r echo=FALSE, out.width='80%', fig.cap = "Great recession."}
-knitr::include_graphics('Figures/per2_126_22_hub4_w.png', auto_pdf = TRUE)
+```{r, echo = FALSE, out.width = '80%', fig.cap = "Great recession."}
+knitr::include_graphics('figures/per2_126_22_hub4_w.png', auto_pdf = TRUE)
 ```
 
-```{r echo=FALSE, out.width='80%', fig.cap = "Stable market."}
-knitr::include_graphics('Figures/per4_126_22_hub4_w.png', auto_pdf = TRUE)
+```{r, echo = FALSE, out.width = '80%', fig.cap = "Stable market."}
+knitr::include_graphics('figures/per4_126_22_hub4_w.png', auto_pdf = TRUE)
 ```
 
 For a more detailed discussion please refer to [@BenFengPal2018] and [@BenFengPal2018b].

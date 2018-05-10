@@ -1,7 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^cran-comments\.md$
+^NEWS\.md$
 ^README\.Rmd$
-^README-.*\.png$
+^README_cache$
+^README_files$
 ^R_buildignore$
 ^papers$
-^cran-comments.md$
+^SparseIndexTracking-vignette_cache$
