@@ -4,10 +4,10 @@
 #'
 #' @docType data
 #'
-#' @usage data(malaka1)
+#' @usage data(data_2010_2015)
 #'
 #' @format A matrix with first column stock symbols and second column stock sector
 #'
 #' @keywords datasets
 #'
-"malaka1"
+"data_2010_2015"
