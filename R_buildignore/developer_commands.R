@@ -38,7 +38,7 @@ tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")  # 
 
 # Documentation
 devtools::document()  #to generate all documentation via roxygen
-?spIndexTrack
+1?spIndexTrack
 
 # README (.md file has to be generated manually by clicking Knitr)
 

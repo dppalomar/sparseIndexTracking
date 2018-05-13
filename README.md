@@ -13,17 +13,8 @@ output:
 
 # sparseIndexTracking
 
-Computation of sparse eigenvectors of a matrix (aka sparse PCA)
-    with running time 2-3 orders of magnitude lower than existing methods and
-    better final performance in terms of recovery of sparsity pattern and 
-    estimation of numerical values. 
-    
-Can handle covariance matrices as well as 
-    data matrices with real or complex-valued entries. Different levels of 
-    sparsity can be specified for each individual ordered eigenvector and the 
-    method is robust in parameter selection. See vignette for a detailed 
-    documentation and comparison, with several illustrative examples. 
-    
+Computation of sparse portfolios for financial index tracking, i.e., joint selection of a subset of the assets that compose the index and computation of their relative weights (capital allocation). The level of sparsity of the portfolios, i.e., the number of selected assets, is controlled through a regularization parameter. Different tracking measures are available, namely the empirical tracking error (ETE), downside risk (DR), Huber empirical tracking error (HETE), and Huber downside risk (HDR). See vignette for a detailed documentation and comparison, with several illustrative examples.
+
 The package is based on the paper:
     K. Benidis, Y. Feng, and D. P. Palomar, “Sparse Portfolios for High-Dimensional 
     Financial Index Tracking,” IEEE Trans. on Signal Processing, vol. 66, no. 1, 
@@ -55,88 +46,84 @@ citation("sparseIndexTracking")
 For more detailed information, please check the vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
 
 
-## Usage of `spEigen()`
-
-We start by loading the package and generating synthetic data with sparse eigenvectors:
-
-```r
-library(sparseEigen)
-set.seed(42)
-
-# parameters 
-m <- 500  # dimension
-n <- 100  # number of samples
-q <- 3  # number of sparse eigenvectors to be estimated
-sp_card <- 0.1*m  # cardinality of each sparse eigenvector
-
-# generate non-overlapping sparse eigenvectors
-V <- matrix(0, m, q)
-V[cbind(seq(1, q*sp_card), rep(1:q, each = sp_card))] <- 1/sqrt(sp_card)
-V <- cbind(V, matrix(rnorm(m*(m-q)), m, m-q))
-# keep first q eigenvectors the same (already orthogonal) and orthogonalize the rest
-V <- qr.Q(qr(V))  
-
-# generate eigenvalues
-lmd <- c(100*seq(from = q, to = 1), rep(1, m-q))
-
-# generate covariance matrix from sparse eigenvectors and eigenvalues
-R <- V %*% diag(lmd) %*% t(V)
-
-# generate data matrix from a zero-mean multivariate Gaussian distribution 
-# with the constructed covariance matrix
-X <- MASS::mvrnorm(n, rep(0, m), R)  # random data with underlying sparse structure
-```
-Then, we estimate the covariance matrix with `cov(X)` and compute its sparse eigenvectors:
+## Usage of `spIndexTrack()`
+We start by loading the package and real data of the index S&P 500 and its underlying assets:
 
 ```r
-# computation of sparse eigenvectors
-res_standard <- eigen(cov(X))
-res_sparse <- spEigen(cov(X), q)
+library(sparseIndexTracking)
+library(xts)
+data(data_2010_2015)
 ```
+The file `data_2010_2015.RData` contains a list with two xts objects:
 
-We can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors (the closer to 1 the better):
+> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the period   2010-2015 (total $T$ trading days)
+  2. `SP500`: A $T\times 1$ xts with the daily linear returns of the index S\&P 500 during the same period.
+
+Note that we use xts objects just for illustration purposes. The function `spIndexTracking()` can also be invoked passing simple data arrays or dataframes.
+
+Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (~126 days) as the training window, and the subsequent six months as the testing window:
 
 ```r
-# show inner product between estimated eigenvectors and originals
-abs(diag(t(res_standard$vectors) %*% V[, 1:q]))  #for standard estimated eigenvectors
-#> [1] 0.9215392 0.9194898 0.9740871
-abs(diag(t(res_sparse$vectors) %*% V[, 1:q]))    #for sparse estimated eigenvectors
-#> [1] 0.9986937 0.9988146 0.9972078
+X_train <- data_2010_2015$X[1:126]
+X_test <- data_2010_2015$X[127:252]
+r_train <- data_2010_2015$SP500[1:126]
+r_test <- data_2010_2015$SP500[127:252]
 ```
 
-Finally, the following plot shows the sparsity pattern of the eigenvectors (sparse computation vs. classical computation):
+Now, we use the four modes (four available tracking errors) of the `spIndexTracking()` algorithm to design our portfolios:
+
+```r
+# ETE
+w_ete <- spIndexTrack(X_train, r_train, lambda = 1e-7, u = 0.5, measure = 'ete')
+cat('Number of assets used:', sum(w_ete > 1e-6))
+#> Number of assets used: 45
+
+# DR
+w_dr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'dr')
+cat('Number of assets used:', sum(w_dr > 1e-6))
+#> Number of assets used: 42
+
+# HETE
+w_hete <- spIndexTrack(X_train, r_train, lambda = 8e-8, u = 0.5, measure = 'hete', hub = 0.05)
+cat('Number of assets used:', sum(w_hete > 1e-6))
+#> Number of assets used: 44
+
+# HDR
+w_hdr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'hdr', hub = 0.05)
+cat('Number of assets used:', sum(w_hdr > 1e-6))
+#> Number of assets used: 43
+```
+
+Finally, we plot the actual value of the index in the testing window in comparison with the values of the designed portfolios:
+
+```r
+plot(cbind("PortfolioETE" = cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)), 
+     legend.loc = "topleft", main = "Cumulative P&L")
+```
+
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" />
 
-## Usage of `spEigenCov()`
-
-The function `spEigenCov()` requires more samples than the dimension (otherwise some regularization is required). Therefore, we generate data as previously with the only difference that we set the number of samples to be `n=600`.
-
-
-
-Then, we compute the covariance matrix through the joint estimation of sparse eigenvectors and eigenvalues:
-
 ```r
-# computation of covariance matrix
-res_sparse2 <- spEigenCov(cov(X), q)
+plot(cbind("PortfolioDR" = cumprod(1 + X_test %*% w_dr$w), cumprod(1 + r_test)),
+     legend.loc = "topleft", main = "Cumulative P&L")
 ```
 
-Again, we can assess how good the estimated eigenvectors are by computing the inner product with the original eigenvectors:
+<img src="man/figures/README-unnamed-chunk-6-2.png" width="75%" style="display: block; margin: auto;" />
 
 ```r
-# show inner product between estimated eigenvectors and originals
-abs(diag(t(res_sparse2$vectors[, 1:q]) %*% V[, 1:q]))    #for sparse estimated eigenvectors
-#> [1] 0.9997197 0.9996029 0.9992848
+plot(cbind("PortfolioHETE" = cumprod(1 + X_test %*% w_hete$w), cumprod(1 + r_test)),
+     legend.loc = "topleft", main = "Cumulative P&L")
 ```
 
-Finally, we can compute the error of the estimated covariance matrix (sparse eigenvector computation vs. classical computation):
+<img src="man/figures/README-unnamed-chunk-6-3.png" width="75%" style="display: block; margin: auto;" />
 
 ```r
-# show error between estimated and true covariance 
-norm(cov(X) - R, type = 'F') #for sample covariance matrix
-#> [1] 48.42514
-norm(res_sparse2$cov - R, type = 'F') #for covariance with sparse eigenvectors
-#> [1] 25.74865
+plot(cbind("PortfolioHDR" = cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)),
+     legend.loc = "topleft", main = "Cumulative P&L")
 ```
+
+<img src="man/figures/README-unnamed-chunk-6-4.png" width="75%" style="display: block; margin: auto;" />
+
 
 
 ## Links

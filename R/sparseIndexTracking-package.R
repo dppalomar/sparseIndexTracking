@@ -1,12 +1,12 @@
 #' sparseIndexTracking: Design of Portfolio of Stocks to Track an Index
 #'
-#' Computation of sparse portfolios for financial index tracking, i.e., joint selection of a subset of theassets that compose the index
+#' Computation of sparse portfolios for financial index tracking, i.e., joint selection of a subset of the assets that compose the index
 #' and computation of their relative weights (capital allocation). The level of sparsity of the portfolios, i.e., the number of selected assets,
 #' is controlled through a regularization parameter. Different tracking measures are available, namely the empirical tracking error (ETE), downside risk (DR),
 #' Huber empirical tracking error (HETE), and Huber downside risk (HDR). See vignette for a detailed documentation and comparison, with several illustrative examples.
 #'
 #' @section Functions:
-#' \code{\link{xxx}}, \code{\link{xxx}}
+#' \code{\link{spIndexTrack}}
 #'
 #' @section Help:
 #' For a quick help see the README:
