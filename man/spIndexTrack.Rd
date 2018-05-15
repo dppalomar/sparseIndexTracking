@@ -26,8 +26,7 @@ spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete", "hdr"),
 \item{thres}{threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.}
 }
 \value{
-A list with the following components:
-\item{\code{w}}{n dimensional vector with the weights of each asset.}
+An n-dimensional vector with allocation weights on the assets.
 }
 \description{
 Computes the weights of assets (relative capital allocation) for a sparse approximation of a financial index.

@@ -11,8 +11,7 @@
 #' @param hub Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.
 #' @param w0 initial point. If \code{NULL} a unifrom allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
 #' @param thres threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.
-#' @return A list with the following components:
-#' \item{\code{w}}{n dimensional vector with the weights of each asset.}
+#' @return An n-dimensional vector with allocation weights on the assets.
 #' @author Konstantinos Benidis and Daniel P. Palomar
 #' @references
 #' K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
