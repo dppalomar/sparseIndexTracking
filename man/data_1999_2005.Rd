@@ -3,13 +3,13 @@
 \docType{data}
 \name{data_1999_2005}
 \alias{data_1999_2005}
-\title{Database of the net returns of the index S&P 500 and its underlying assets}
-\format{A list of two xts objects, namely 'X' and 'SP500', corresponding to the net returns of the assets and the index, respectively.}
+\title{Database of the net returns of the index S&P 500 and its underlying assets during 7/1999 - 12/2005}
+\format{A list of two xts objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.}
 \usage{
 data(data_1999_2005)
 }
 \description{
 Database of the net returns of the index S&P 500 and its underlying assets during the period 7/1999 - 12/2005.
-Only the assets that where in the index during the whole period are included.
+Only the assets that were in the index during the whole period are included.
 }
 \keyword{datasets}
