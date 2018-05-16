@@ -1,0 +1,158 @@
+[1] "Executing .Rprofile..."
+###########################################################################
+Start configuration from /Users/palomar/Documents/TradingPlatform/platform/code
+[Step 0] Setting some GLOBAL options...
+[Step 1] Librarying all the necessary packages...
+Loading required package: curl
+Loading required package: httr
+
+Attaching package: 'httr'
+
+The following object is masked from 'package:curl':
+
+    handle_reset
+
+Loading required package: Quandl
+Loading required package: xts
+Loading required package: zoo
+Loading required package: stats
+
+Attaching package: 'zoo'
+
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+
+Loading required package: reshape2
+Loading required package: Rmisc
+Loading required package: lattice
+Loading required package: plyr
+Loading required package: quantmod
+Loading required package: TTR
+Version 0.4-0 included new data defaults. See ?getSymbols.
+Loading required package: matrixcalc
+Loading required package: fun
+Loading required package: PerformanceAnalytics
+Loading required package: R.utils
+Loading required package: R.oo
+Loading required package: R.methodsS3
+R.methodsS3 v1.7.1 (2016-02-15) successfully loaded. See ?R.methodsS3 for help.
+R.oo v1.22.0 (2018-04-21) successfully loaded. See ?R.oo for help.
+
+Attaching package: 'R.oo'
+
+The following objects are masked from 'package:methods':
+
+    getClasses, getMethods
+
+The following objects are masked from 'package:base':
+
+    attach, detach, gc, load, save
+
+R.utils v2.6.0 (2017-11-04) successfully loaded. See ?R.utils for help.
+
+Attaching package: 'R.utils'
+
+The following objects are masked from 'package:base':
+
+    cat, commandArgs, getOption, inherits, isOpen, parse, warnings
+
+Loading required package: gridExtra
+Loading required package: readr
+
+Attaching package: 'readr'
+
+The following object is masked from 'package:curl':
+
+    parse_date
+
+Loading required package: Matrix
+Loading required package: MASS
+Loading required package: grDevices
+Loading required package: graphics
+
+Attaching package: 'graphics'
+
+The following object is masked from 'package:Matrix':
+
+    image
+
+The following object is masked from 'package:PerformanceAnalytics':
+
+    legend
+
+Loading required package: utils
+
+Attaching package: 'utils'
+
+The following objects are masked from 'package:Matrix':
+
+    head, tail
+
+The following object is masked from 'package:R.utils':
+
+    timestamp
+
+Loading required package: rmarkdown
+Loading required package: ggplot2
+Loading required package: rbokeh
+Loading required package: matrixStats
+
+Attaching package: 'matrixStats'
+
+The following object is masked from 'package:plyr':
+
+    count
+
+Loading required package: formattable
+
+Attaching package: 'formattable'
+
+The following object is masked from 'package:MASS':
+
+    area
+
+Loading required package: RcppRoll
+Loading required package: tsoutliers
+Loading required package: lubridate
+
+Attaching package: 'lubridate'
+
+The following object is masked from 'package:plyr':
+
+    here
+
+The following object is masked from 'package:base':
+
+    date
+
+Loading required package: bizdays
+
+Attaching package: 'bizdays'
+
+The following object is masked from 'package:stats':
+
+    offset
+
+Loading required package: futile.logger
+[Step 2] Loading all the paths...
+[Step 3] Loading all the helpful functions...
+[Step 4] Defining some GLOBAL variables...
+==> Configure succeed!
+Welcome DANIEL on Wed 16-May-2018 at 23:13:26. Enjoy!
+###########################################################################
+* installing *source* package 'sparseIndexTracking' ...
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded
+* DONE (sparseIndexTracking)
+
+Goodbye at  Wed May 16 23:13:27 2018 

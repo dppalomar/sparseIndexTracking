@@ -59,11 +59,11 @@ We start by loading the package and real data of the index S&P 500 and its under
 ```r
 library(sparseIndexTracking)
 library(xts)
-data(data_2010_2015)
+data(data_2010_2011)
 ```
-The file `data_2010_2015.RData` contains a list with two xts objects:
+The data `data_2010_2011` contains a list with two xts objects:
 
-> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the period   2010-2015 (total $T$ trading days)
+> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the period   2010-2011 (total $T$ trading days)
   2. `SP500`: A $T\times 1$ xts with the daily linear returns of the index S\&P 500 during the same period.
 
 Note that we use xts objects just for illustration purposes. The function `spIndexTracking()` can also be invoked passing simple data arrays or dataframes.
@@ -71,10 +71,10 @@ Note that we use xts objects just for illustration purposes. The function `spInd
 Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (~126 days) as the training window, and the subsequent six months as the testing window:
 
 ```r
-X_train <- data_2010_2015$X[1:126]
-X_test <- data_2010_2015$X[127:252]
-r_train <- data_2010_2015$SP500[1:126]
-r_test <- data_2010_2015$SP500[127:252]
+X_train <- data_2010_2011$X[1:126]
+X_test <- data_2010_2011$X[127:252]
+r_train <- data_2010_2011$SP500[1:126]
+r_test <- data_2010_2011$SP500[127:252]
 ```
 
 Now, we use the four modes (four available tracking errors) of the `spIndexTracking()` algorithm to design our portfolios:

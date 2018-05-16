@@ -1,8 +1,7 @@
 Package: sparseIndexTracking
 Title: Design of Portfolio of Stocks to Track an Index
 Version: 0.1.0
-Description: 
-    Computation of sparse portfolios for financial index tracking, i.e., joint 
+Description: Computation of sparse portfolios for financial index tracking, i.e., joint
     selection of a subset of the assets that compose the index and computation 
     of their relative weights (capital allocation). The level of sparsity of the 
     portfolios, i.e., the number of selected assets, is controlled through a 
@@ -13,7 +12,7 @@ Description:
     The package is based on the paper:
     K. Benidis, Y. Feng, and D. P. Palomar, "Sparse Portfolios for High-Dimensional 
     Financial Index Tracking," IEEE Trans. on Signal Processing, vol. 66, no. 1, 
-    pp. 155-170, Jan. 2018. <doi:10.1109/TSP.2017.2762286>
+    pp. 155-170, Jan. 2018. <doi:10.1109/TSP.2017.2762286>.
 Authors@R: c(
   person("Konstantinos", "Benidis", role = "aut", email = "benidisk@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
@@ -33,7 +32,8 @@ Suggests:
     xts,
     knitr,
     rmarkdown,
-    testthat
+    bookdown,
+    prettydoc
 VignetteBuilder: 
     knitr,
     bookdown,

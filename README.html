@@ -154,20 +154,20 @@ citation(&quot;sparseIndexTracking&quot;)</code></pre>
 <p>We start by loading the package and real data of the index S&amp;P 500 and its underlying assets:</p>
 <pre class="r"><code>library(sparseIndexTracking)
 library(xts)
-data(data_2010_2015)</code></pre>
-<p>The file <code>data_2010_2015.RData</code> contains a list with two xts objects:</p>
+data(data_2010_2011)</code></pre>
+<p>The data <code>data_2010_2011</code> contains a list with two xts objects:</p>
 <blockquote>
 <ol style="list-style-type: decimal">
-<li><code>X</code>: A <span class="math inline">\(T\times N\)</span> xts with the daily linear returns of the <span class="math inline">\(N\)</span> assets that were in the index during the period 2010-2015 (total <span class="math inline">\(T\)</span> trading days)</li>
+<li><code>X</code>: A <span class="math inline">\(T\times N\)</span> xts with the daily linear returns of the <span class="math inline">\(N\)</span> assets that were in the index during the period 2010-2011 (total <span class="math inline">\(T\)</span> trading days)</li>
 <li><code>SP500</code>: A <span class="math inline">\(T\times 1\)</span> xts with the daily linear returns of the index S&amp;P 500 during the same period.</li>
 </ol>
 </blockquote>
 <p>Note that we use xts objects just for illustration purposes. The function <code>spIndexTracking()</code> can also be invoked passing simple data arrays or dataframes.</p>
 <p>Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (~126 days) as the training window, and the subsequent six months as the testing window:</p>
-<pre class="r"><code>X_train &lt;- data_2010_2015$X[1:126]
-X_test &lt;- data_2010_2015$X[127:252]
-r_train &lt;- data_2010_2015$SP500[1:126]
-r_test &lt;- data_2010_2015$SP500[127:252]</code></pre>
+<pre class="r"><code>X_train &lt;- data_2010_2011$X[1:126]
+X_test &lt;- data_2010_2011$X[127:252]
+r_train &lt;- data_2010_2011$SP500[1:126]
+r_test &lt;- data_2010_2011$SP500[127:252]</code></pre>
 <p>Now, we use the four modes (four available tracking errors) of the <code>spIndexTracking()</code> algorithm to design our portfolios:</p>
 <pre class="r"><code># ETE
 w_ete &lt;- spIndexTrack(X_train, r_train, lambda = 1e-7, u = 0.5, measure = 'ete')

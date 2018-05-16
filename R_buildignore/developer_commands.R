@@ -10,7 +10,7 @@ library(sparseIndexTracking)
 help(package="sparseIndexTracking")
 package?sparseIndexTracking
 ?spIndexTrack
-?data(data_1999_2005)
+?data(data_2010_2011)
 
 
 
@@ -38,7 +38,7 @@ tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")  # 
 
 # Documentation
 devtools::document()  #to generate all documentation via roxygen
-1?spIndexTrack
+?spIndexTrack
 
 # README (.md file has to be generated manually by clicking Knitr)
 

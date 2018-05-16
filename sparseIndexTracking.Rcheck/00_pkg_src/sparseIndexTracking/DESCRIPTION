@@ -1,0 +1,36 @@
+Package: sparseIndexTracking
+Title: Design of Portfolio of Stocks to Track an Index
+Version: 0.1.0
+Description: Computation of sparse portfolios for financial index tracking, i.e., joint
+    selection of a subset of the assets that compose the index and computation 
+    of their relative weights (capital allocation). The level of sparsity of the 
+    portfolios, i.e., the number of selected assets, is controlled through a 
+    regularization parameter. Different tracking measures are available, namely, 
+    the empirical tracking error (ETE), downside risk (DR), Huber empirical 
+    tracking error (HETE), and Huber downside risk (HDR). See vignette for a 
+    detailed documentation and comparison, with several illustrative examples.
+    The package is based on the paper:
+    K. Benidis, Y. Feng, and D. P. Palomar, "Sparse Portfolios for High-Dimensional 
+    Financial Index Tracking," IEEE Trans. on Signal Processing, vol. 66, no. 1, 
+    pp. 155-170, Jan. 2018. <doi:10.1109/TSP.2017.2762286>.
+Authors@R: c(
+  person("Konstantinos", "Benidis", role = "aut", email = "benidisk@gmail.com"),
+  person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
+  )
+Maintainer: Daniel P. Palomar <daniel.p.palomar@gmail.com>
+URL: https://github.com/dppalomar/sparseIndexTracking,
+        https://www.danielppalomar.com,
+        https://doi.org/10.1109/TSP.2017.2762286
+BugReports: https://github.com/dppalomar/sparseIndexTracking/issues
+Depends: R (>= 3.4.0)
+License: GPL-3 | file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+RoxygenNote: 6.0.1
+Suggests: xts, knitr, rmarkdown, bookdown, prettydoc
+VignetteBuilder: knitr, bookdown, prettydoc
+NeedsCompilation: no
+Packaged: 2018-05-16 15:11:35 UTC; palomar
+Author: Konstantinos Benidis [aut],
+  Daniel P. Palomar [cre, aut]

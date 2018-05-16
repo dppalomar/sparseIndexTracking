@@ -103,20 +103,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We start by loading the package and real data of the index S&amp;P 500 and its underlying assets:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sparseIndexTracking)
 <span class="kw">library</span>(xts)
-<span class="kw">data</span>(data_2010_<span class="dv">2015</span>)</code></pre></div>
-<p>The file <code>data_2010_2015.RData</code> contains a list with two xts objects:</p>
+<span class="kw">data</span>(data_2010_<span class="dv">2011</span>)</code></pre></div>
+<p>The data <code>data_2010_2011</code> contains a list with two xts objects:</p>
 <blockquote>
 <ol style="list-style-type: decimal">
-<li><code>X</code>: A <span class="math inline">\(T\times N\)</span> xts with the daily linear returns of the <span class="math inline">\(N\)</span> assets that were in the index during the period 2010-2015 (total <span class="math inline">\(T\)</span> trading days)</li>
+<li><code>X</code>: A <span class="math inline">\(T\times N\)</span> xts with the daily linear returns of the <span class="math inline">\(N\)</span> assets that were in the index during the period 2010-2011 (total <span class="math inline">\(T\)</span> trading days)</li>
 <li><code>SP500</code>: A <span class="math inline">\(T\times 1\)</span> xts with the daily linear returns of the index S&amp;P 500 during the same period.</li>
 </ol>
 </blockquote>
 <p>Note that we use xts objects just for illustration purposes. The function <code>spIndexTrack()</code> can also be invoked passing simple data arrays or dataframes.</p>
 <p>Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (~126 days) as the training window, and the subsequent six months as the testing window:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X_train &lt;-<span class="st"> </span>data_2010_<span class="dv">2015</span><span class="op">$</span>X[<span class="dv">1</span><span class="op">:</span><span class="dv">126</span>]
-X_test &lt;-<span class="st"> </span>data_2010_<span class="dv">2015</span><span class="op">$</span>X[<span class="dv">127</span><span class="op">:</span><span class="dv">252</span>]
-r_train &lt;-<span class="st"> </span>data_2010_<span class="dv">2015</span><span class="op">$</span>SP500[<span class="dv">1</span><span class="op">:</span><span class="dv">126</span>]
-r_test &lt;-<span class="st"> </span>data_2010_<span class="dv">2015</span><span class="op">$</span>SP500[<span class="dv">127</span><span class="op">:</span><span class="dv">252</span>]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X_train &lt;-<span class="st"> </span>data_2010_<span class="dv">2011</span><span class="op">$</span>X[<span class="dv">1</span><span class="op">:</span><span class="dv">126</span>]
+X_test &lt;-<span class="st"> </span>data_2010_<span class="dv">2011</span><span class="op">$</span>X[<span class="dv">127</span><span class="op">:</span><span class="dv">252</span>]
+r_train &lt;-<span class="st"> </span>data_2010_<span class="dv">2011</span><span class="op">$</span>SP500[<span class="dv">1</span><span class="op">:</span><span class="dv">126</span>]
+r_test &lt;-<span class="st"> </span>data_2010_<span class="dv">2011</span><span class="op">$</span>SP500[<span class="dv">127</span><span class="op">:</span><span class="dv">252</span>]</code></pre></div>
 <p>Now, we use the four modes (four available tracking errors) of the <code>spIndexTrack()</code> algorithm to design our portfolios:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ETE</span>
 w_ete &lt;-<span class="st"> </span><span class="kw">spIndexTrack</span>(X_train, r_train, <span class="dt">lambda =</span> <span class="fl">1e-7</span>, <span class="dt">u =</span> <span class="fl">0.5</span>, <span class="dt">measure =</span> <span class="st">'ete'</span>)

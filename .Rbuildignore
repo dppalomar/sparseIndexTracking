@@ -3,8 +3,10 @@
 ^cran-comments\.md$
 ^NEWS\.md$
 ^README\.Rmd$
+^README\.html$
 ^README_cache$
 ^README_files$
 ^R_buildignore$
 ^papers$
-^SparseIndexTracking-vignette_cache$
+^vignettes/SparseIndexTracking-vignette_cache$
+^vignettes/SparseIndexTracking-vignette_files$
