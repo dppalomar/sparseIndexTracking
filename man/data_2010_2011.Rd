@@ -4,7 +4,7 @@
 \name{data_2010_2011}
 \alias{data_2010_2011}
 \title{Database of the net returns of the index S&P 500 and its underlying assets during 1/2010 - 12/2011}
-\format{A list of two xts objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.}
+\format{A list of two \code{xts} objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.}
 \usage{
 data(data_2010_2011)
 }

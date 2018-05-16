@@ -7,7 +7,7 @@
 #'
 #' @usage data(data_2010_2011)
 #'
-#' @format A list of two xts objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.
+#' @format A list of two \code{xts} objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.
 #'
 #' @keywords datasets
 #'
