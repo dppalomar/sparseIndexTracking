@@ -21,7 +21,7 @@ spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete", "hdr"),
 
 \item{hub}{Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.}
 
-\item{w0}{initial point. If \code{NULL} a unifrom allocation is used, i.e., \code{w0 <- rep(1/N, N)}.}
+\item{w0}{initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.}
 
 \item{thres}{threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.}
 }

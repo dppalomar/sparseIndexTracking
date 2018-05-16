@@ -9,7 +9,7 @@
 #' @param measure performance measure. Possible values \code{'ete'} (empirical tracking error - default), \code{'dr'} (downside risk),
 #' \code{'hete'} (Huber empirical tracking error), and \code{'hdr'} (Huber downside risk).
 #' @param hub Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.
-#' @param w0 initial point. If \code{NULL} a unifrom allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
+#' @param w0 initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
 #' @param thres threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.
 #' @return An n-dimensional vector with allocation weights on the assets.
 #' @author Konstantinos Benidis and Daniel P. Palomar
