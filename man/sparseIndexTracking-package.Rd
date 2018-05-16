@@ -21,7 +21,7 @@ detailed documentation and comparison, with several illustrative examples.
 
 \section{Help}{
 
-For a quick help see the README:
+For a quick help see the README file:
 \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html}{GitHub-README} and
 
 For more details see the vignette:
