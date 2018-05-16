@@ -16,6 +16,8 @@ output:
     number_sections: no
     toc: yes
     toc_depth: 2
+header-includes:
+  \allowdisplaybreaks
 indent: yes
 csl: ieee.csl
 bibliography: refs.bib
@@ -39,8 +41,8 @@ opts_chunk$set(
 knit_hooks$set(pngquant = hook_pngquant)
 #Help on bookdown: https://bookdown.org/yihui/bookdown/
 #rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "all")
-#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::pdf_document2")
 #rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::html_document2")
+#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::pdf_document2")
 #tools::compactPDF("vignettes/SparseIndexTracking-vignette.pdf", gs_quality = "ebook")
 ```
 
@@ -49,7 +51,7 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 
 # Comparison with other packages
-
+There are currently no other R packages for index tracking. In paper [@BenFengPal2018] and monograph [@BenFengPal2018b], a detailed comparison in terms of execution speed and performance is made with the mixed-integer quadratic programming (MIQP) solver Gurobi (for which R has an interface via package `ROI` and plugin `ROI.plugin.gurobi`).
 
 # Usage of the package
 We start by loading the package and real data of the index S&P 500 and its underlying assets:
@@ -221,8 +223,7 @@ $$
 \end{aligned}
 $$
 where $\lambda_{\text{max}}^{(\mathbf{A})}$ denotes the maximum eigenvalue of a matrix $\mathbf{A}$, $\mathbf{I}$ denotes the identity matrix, $\text{Diag}(\mathbf{x})$ is a diagonal matrix with the vector $\mathbf{x}$ at its principal diagonal, and  
-$$
-\begin{aligned}
+\begin{align}
   \mathbf{d}_{p,u}^{(k)} & = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
 	d_{p,u}(w^{(k)}) & = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
 	\mathbf{y}^{(k)} & = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
@@ -239,8 +240,8 @@ $$
 	\mathbf{L}_1 & = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
 	\mathbf{L}_2 & = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
 	\mathbf{L}_3 & = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
-\end{aligned}
-$$
+\end{align}
+
 
 The following propositions provide a waterfilling structured solution of problem \@ref(eq:MM-iterative-form), considering two special cases, namely, $u=1$ and $u<1$.
 

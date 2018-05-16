@@ -12,7 +12,7 @@
 
 <meta name="author" content="Konstantinos Benidis and Daniel P. Palomar" />
 
-<meta name="date" content="2018-05-15" />
+<meta name="date" content="2018-05-16" />
 
 <title>Design of Portfolio of Stocks to Track an Index</title>
 
@@ -73,7 +73,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title toc-ignore">Design of Portfolio of Stocks to Track an Index</h1>
 <h3 class="author">Konstantinos Benidis and Daniel P. Palomar</h3>
-<h3 class="date">2018-05-15</h3>
+<h3 class="date">2018-05-16</h3>
 </header>
 
 <hr>
@@ -96,6 +96,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </blockquote>
 <div id="comparison-with-other-packages" class="section level1">
 <h1>Comparison with other packages</h1>
+<p>There are currently no other R packages for index tracking. In paper <span class="citation">[1]</span> and monograph <span class="citation">[2]</span>, a detailed comparison in terms of execution speed and performance is made with the mixed-integer quadratic programming (MIQP) solver Gurobi (for which R has an interface via package <code>ROI</code> and plugin <code>ROI.plugin.gurobi</code>).</p>
 </div>
 <div id="usage-of-the-package" class="section level1">
 <h1>Usage of the package</h1>
@@ -243,7 +244,7 @@ M(2|x| - M) &amp;\quad |x| &gt; M,
 <p>where <span class="math display">\[
 \mathcal{W}_{u} = \big\{\mathbf{w} \big| \mathbf{w}^\top\mathbf{1} = 1, \mathbf{0}\leq\mathbf{w}\leq u\mathbf{1}\big\},
 \]</span> and <span class="math inline">\(\mathbf{q}^{(k)}\in\mathbb{R}^N\)</span>.</p>
-<p>What differentiates the various tracking errors is the exact form of <span class="math inline">\(\mathbf{q}^{(k)}\)</span> that we need to compute at each iteration <span class="math inline">\(k\)</span> of the algorithm: <span class="math display">\[
+What differentiates the various tracking errors is the exact form of <span class="math inline">\(\mathbf{q}^{(k)}\)</span> that we need to compute at each iteration <span class="math inline">\(k\)</span> of the algorithm: <span class="math display">\[
 \begin{aligned}
   \mathbf{q}_{\text{ETE}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}}(2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} -\frac{2}{T}\mathbf{X}^\top\mathbf{r}^b),\\
   \mathbf{q}_{\text{DR}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_1)}} (\frac{2}{T} 2(\mathbf{L}_1 - \lambda_{\text{max}}^{(\mathbf{L}_1)}\mathbf{I})\mathbf{w}^{(k)} + \lambda\mathbf{d}_{p,u}^{(k)} + \frac{2}{T}\mathbf{X}^\top(\mathbf{y}^{(k)} - \mathbf{r}^b)),\\
@@ -251,8 +252,8 @@ M(2|x| - M) &amp;\quad |x| &gt; M,
   \mathbf{q}_{\text{HDR}}^{(k)} &amp; = \frac{1}{\lambda_{\text{max}}^{(\mathbf{L}_3)}}(2(\mathbf{L}_3 - \lambda_{\text{max}}^{(\mathbf{L}_3)}\mathbf{I})\mathbf{w}^{(k)} + \lambda{\mathbf{d}_{p,u}^{(k)}} +\frac{2}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})(\mathbf{c}^{(k)} - \mathbf{r}^b)),
 \end{aligned}
 \]</span> where <span class="math inline">\(\lambda_{\text{max}}^{(\mathbf{A})}\)</span> denotes the maximum eigenvalue of a matrix <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\mathbf{I}\)</span> denotes the identity matrix, <span class="math inline">\(\text{Diag}(\mathbf{x})\)</span> is a diagonal matrix with the vector <span class="math inline">\(\mathbf{x}\)</span> at its principal diagonal, and<br />
-<span class="math display">\[
-\begin{aligned}
+
+<span class="math display">\[\begin{align}
   \mathbf{d}_{p,u}^{(k)} &amp; = \left[d_{p,u}(w_1^{(k)}),\dots,d_{p,u}(w_N^{(k)})\right]^\top,\\
     d_{p,u}(w^{(k)}) &amp; = \frac{1}{\log(1 + u/p)(p+w^{(k)})},\\
     \mathbf{y}^{(k)} &amp; = -(\mathbf{X}\mathbf{w}^{(k)} - \mathbf{r}^b)^+,\\
@@ -269,8 +270,7 @@ M(2|x| - M) &amp;\quad |x| &gt; M,
     \mathbf{L}_1 &amp; = \frac{1}{T}\mathbf{X}^\top\mathbf{X},\\
     \mathbf{L}_2 &amp; = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{a}^{(k)})\mathbf{X},\\
     \mathbf{L}_3 &amp; = \frac{1}{T}\mathbf{X}^\top\text{Diag}(\mathbf{b}^{(k)})\mathbf{X}.
-\end{aligned}
-\]</span></p>
+\end{align}\]</span>
 <p>The following propositions provide a waterfilling structured solution of problem <a href="#eq:MM-iterative-form">(3)</a>, considering two special cases, namely, <span class="math inline">\(u=1\)</span> and <span class="math inline">\(u&lt;1\)</span>.</p>
 
 <div class="proposition">
@@ -309,7 +309,7 @@ and <span class="math display">\[\begin{aligned}
 <p>[1] K. Benidis, Y. Feng, and D. P. Palomar, “Sparse portfolios for high-dimensional financial index tracking,” <em>IEEE Transactions on Signal Processing</em>, vol. 66, no. 1, pp. 155–170, Jan. 2018.</p>
 </div>
 <div id="ref-BenFengPal2018b">
-<p>[2] K. Benidis, Y. Feng, and D. P. Palomar, “Optimization methods for financial index tracking: From theory to practice,” <em>Foundations and Trends in Optimization</em>, vol. xx, no. x, pp. xx–xx, May. 2018.</p>
+<p>[2] K. Benidis, Y. Feng, and D. P. Palomar, <em>Optimization methods for financial index tracking: From theory to practice</em>. Foundations and Trends in Optimization, Now Publishers, 2018.</p>
 </div>
 <div id="ref-SunBabPal2018">
 <p>[3] Y. Sun, P. Babu, and D. P. Palomar, “Majorization-minimization algorithms in signal processing, communications, and machine learning,” <em>IEEE Transactions on Signal Processing</em>, vol. 65, no. 3, pp. 794–816, Feb. 2017.</p>
