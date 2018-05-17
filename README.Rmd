@@ -124,7 +124,7 @@ plot(cbind("PortfolioHDR" = cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)
 Package: [CRAN](https://cran.r-project.org/package=sparseIndexTracking) and [GitHub](https://github.com/dppalomar/sparseIndexTracking).
 
 README file: [GitHub-readme](https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html) and
-[CRAN-readme](https://cran.r-project.org/web/packages/sparseIndexTraciking/README.html).
+[CRAN-readme](https://cran.r-project.org/web/packages/sparseIndexTracking/README.html).
 
 Vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf),
 [CRAN-pdf-vignette](https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf).
