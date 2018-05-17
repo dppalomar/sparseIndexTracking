@@ -15,10 +15,12 @@
 #' @section Help:
 #' For a quick help see the README file:
 #' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html}{GitHub-README} and
+#' \href{https://cran.r-project.org/web/packages/sparseIndexTracking/README.html}{CRAN-README}.
 #'
 #' For more details see the vignette:
 #' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html}{GitHub-html-vignette},
 #' \href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf}{GitHub-pdf-vignette}, and
+#' \href{https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf}{CRAN-pdf-vignette}.
 #'
 #' @author Konstantinos Benidis and Daniel P. Palomar
 #'

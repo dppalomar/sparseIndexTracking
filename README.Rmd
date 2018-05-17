@@ -60,7 +60,9 @@ citation("sparseIndexTracking")
 
 
 ## Vignette
-For more detailed information, please check the vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
+For more detailed information, please check the vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html),
+[GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf),
+[CRAN-pdf-vignette](https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf).
 
 
 ## Usage of `spIndexTrack()`
@@ -119,8 +121,10 @@ plot(cbind("PortfolioHDR" = cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)
 
 
 ## Links
-Package: [GitHub](https://github.com/dppalomar/sparseIndexTracking).
+Package: [CRAN](https://cran.r-project.org/package=sparseIndexTracking) and [GitHub](https://github.com/dppalomar/sparseIndexTracking).
 
-README file: [GitHub-readme](https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html).
+README file: [GitHub-readme](https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html) and
+[CRAN-readme](https://cran.r-project.org/web/packages/sparseIndexTraciking/README.html).
 
-Vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf).
+Vignette: [GitHub-html-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html) and [GitHub-pdf-vignette](https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf),
+[CRAN-pdf-vignette](https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf).
