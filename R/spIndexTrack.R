@@ -16,6 +16,19 @@
 #' @references
 #' K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
 #' \emph{IEEE Transactions on Signal Processing}, vol. 66, no. 1, pp. 155-170, Jan. 2018.
+#' @examples
+#' library(sparseIndexTracking)
+#' library(xts)
+#'
+#' # load data
+#' data(INDEX_2010)
+#'
+#' # fit portfolio under error measure ETE (Empirical Tracking Error)
+#' w_ete <- spIndexTrack(INDEX_2010$X, INDEX_2010$SP500, lambda = 1e-7, u = 0.5, measure = 'ete')
+#'
+#' # show cardinality achieved
+#' cat("Number of assets used:", sum(w_ete > 1e-6))
+#'
 #' @export
 spIndexTrack <- function(X, r, lambda, u = 1,
                          measure = c('ete', 'dr', 'hete', 'hdr'),

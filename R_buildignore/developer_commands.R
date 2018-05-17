@@ -10,7 +10,7 @@ library(sparseIndexTracking)
 help(package="sparseIndexTracking")
 package?sparseIndexTracking
 ?spIndexTrack
-?data(data_1999_2005)
+?INDEX_2010
 
 
 
@@ -58,10 +58,11 @@ covr::package_coverage()  #coverage of tests
 devtools::check()
 rcmdcheck::rcmdcheck()
 devtools::build()
-#R CMD build . --compact-vignettes
-#R CMD build . --compact-vignettes=gs+qpdf
+#R CMD build . --compact-vignettes=gs+qpdf  # this is to generate tarball
 #R CMD check sparseIndexTracking_0.1.0.tar.gz --as-cran  # this is before submission to CRAN
+#then I can submit the tarball directly via the webform: https://cran.r-project.org/submit.html
 
-# to upload to CRAN
-devtools::build_win()  #to check under windows
+# an alternative is to upload to CRAN via devtools:
+#devtools::build_win()  #to check under windows
 devtools::release(args = "--compact-vignettes=gs+qpdf")  #for CRAN
+
