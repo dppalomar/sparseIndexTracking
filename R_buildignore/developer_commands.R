@@ -10,7 +10,7 @@ library(sparseIndexTracking)
 help(package="sparseIndexTracking")
 package?sparseIndexTracking
 ?spIndexTrack
-?data(data_2010_2011)
+?data(data_1999_2005)
 
 
 
@@ -58,9 +58,10 @@ covr::package_coverage()  #coverage of tests
 devtools::check()
 rcmdcheck::rcmdcheck()
 devtools::build()
-#R CMD build .
+#R CMD build . --compact-vignettes
+#R CMD build . --compact-vignettes=gs+qpdf
 #R CMD check sparseIndexTracking_0.1.0.tar.gz --as-cran  # this is before submission to CRAN
 
 # to upload to CRAN
-devtools::build_win()
-devtools::release()  #for CRAN
+devtools::build_win()  #to check under windows
+devtools::release(args = "--compact-vignettes=gs+qpdf")  #for CRAN
