@@ -22,7 +22,7 @@ citEntry(entry = "Article",
 )
 
 citEntry(entry = "Manual",
-         title        = "sparseIndexTracking: Design of Portfolio of Stocks to Tracks an Index",
+         title        = "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index",
          author       = personList(as.person("K. Benidis"),
                                    as.person("D. P. Palomar")),
          note         = "R package version 0.1.0",
