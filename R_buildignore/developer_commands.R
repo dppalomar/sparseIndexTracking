@@ -5,6 +5,8 @@
 install.packages(file.choose(), repos = NULL, type="source")
 # Installation from GitHub
 devtools::install_github("dppalomar/sparseIndexTracking")
+# Installation from CRAN
+install.packages("sparseIndexTracking")
 # Getting help
 library(sparseIndexTracking)
 help(package="sparseIndexTracking")
