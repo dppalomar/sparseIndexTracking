@@ -9,6 +9,8 @@
 #'
 #' @format A list of two \code{xts} objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.
 #'
+#' @source \href{https://finance.yahoo.com}{Yahoo! Finance}
+#'
 #' @keywords datasets
 #'
 "INDEX_2010"

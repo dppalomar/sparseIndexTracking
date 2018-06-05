@@ -5,6 +5,9 @@
 \alias{INDEX_2010}
 \title{Database of the net returns of the index S&P 500 and its underlying assets during the year 2010}
 \format{A list of two \code{xts} objects, namely, \code{X} and \code{SP500}, corresponding to the net returns of the assets and the index, respectively.}
+\source{
+\href{https://finance.yahoo.com}{Yahoo! Finance}
+}
 \usage{
 data(INDEX_2010)
 }
