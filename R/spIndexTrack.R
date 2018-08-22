@@ -125,16 +125,6 @@ spIndexTrack <- function(X, r, lambda, u = 1,
         flg <- 0
       }
     }
-
-    # Threshold
-    w[w < thres] <- 0
-    w <- w / sum(w)
-
-    if (!is.null(colnames(X))){
-      w <- as.data.frame(w)
-      rownames(w) <- colnames(X)
-    }
-    return(weights = w)
   }
 
 
@@ -196,16 +186,6 @@ spIndexTrack <- function(X, r, lambda, u = 1,
         flg <- 0
       }
     }
-
-    # Threshold
-    w[w < thres] <- 0
-    w <- w / sum(w)
-
-    if (!is.null(colnames(X))){
-      w <- as.data.frame(w)
-      rownames(w) <- colnames(X)
-    }
-    return(weights = w)
   }
 
 
@@ -272,17 +252,6 @@ spIndexTrack <- function(X, r, lambda, u = 1,
         flg <- 0
       }
     }
-
-    # Threshold
-    w[w < thres] <- 0
-    w <- w / sum(w)
-
-    # Add names
-    if (!is.null(colnames(X))){
-      w <- as.data.frame(w)
-      rownames(w) <- colnames(X)
-    }
-    return(weights = w)
   }
 
   ######################### MM LOOP FOR HDR #########################
@@ -347,18 +316,17 @@ spIndexTrack <- function(X, r, lambda, u = 1,
         flg <- 0
       }
     }
-
-    # Threshold
-    w[w < thres] <- 0
-    w <- w / sum(w)
-
-    # Add names
-    if (!is.null(colnames(X))){
-      w <- as.data.frame(w)
-      rownames(w) <- colnames(X)
-    }
-    return(weights = w)
   }
+
+  # Threshold
+  w[w < thres] <- 0
+  w <- w / sum(w)
+
+  # name
+  if (!is.null(colnames(X)))
+    names(w) <- colnames(X)
+
+  return(w)
 }
 
 
