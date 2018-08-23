@@ -46,11 +46,10 @@ spIndexTrack <- function(X, r, lambda, u = 1,
   if (u <= 0) stop("The input argument 'u' should be positive.")
   #################################
 
-  if (is.null(w0)) {
+  if (is.null(w0))
     w0 <- rep(1/n, n)
-  } else {
+  else
     if (anyNA(w0)) stop("This function cannot handle NAs.")
-  }
 
   # Preallocation
   F_v <- matrix(0, max_iter, 1)  # objective value
@@ -69,11 +68,10 @@ spIndexTrack <- function(X, r, lambda, u = 1,
 
   ######################### MM LOOP FOR ETE #########################
   if (measure == 'ete') {
-
     A <- 1/m * t(X) %*% X
     Lmax_A <- eigen(A, symmetric = TRUE, only.values = TRUE)$values[1]
 
-    B <- 2/Lmax_A * (A - Lmax_A*diag(rep(1, n)))
+    B <- 2/Lmax_A * (A - Lmax_A*diag(n))
     b <- -2/m * t(X) %*% r
 
     for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
@@ -118,9 +116,8 @@ spIndexTrack <- function(X, r, lambda, u = 1,
         # Stopping criterion
         if (flg == 0) {
           rel_change <- (abs(F_v[k] - F_v[k - 1]) / max(1, abs(F_v[k - 1]) ) ) # relative change in objective
-          if ((rel_change <= tol[ee]) || (k >= max_iter)) {
+          if ((rel_change <= tol[ee]) || (k >= max_iter))
             break
-          }
         }
         flg <- 0
       }
@@ -130,11 +127,10 @@ spIndexTrack <- function(X, r, lambda, u = 1,
 
   ######################### MM LOOP FOR DR #########################
   else if (measure == 'dr') {
-
     A <- 1/m * t(X) %*% X
     Lmax_A <- eigen(A, symmetric = TRUE, only.values = TRUE)$values[1]
 
-    B <- 2/Lmax_A * (A - Lmax_A*diag(rep(1, n)))
+    B <- 2/Lmax_A * (A - Lmax_A*diag(n))
     b <- -2/m * t(X) %*% r
 
     for (ee in 1:(K+1)) {  # loop for approximation based on p & epsilon
