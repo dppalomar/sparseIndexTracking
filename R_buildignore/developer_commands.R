@@ -46,3 +46,11 @@ devtools::build()
 #R CMD check sparseIndexTracking_0.1.0.tar.gz --as-cran  # this is before submission to CRAN
 #submit the tarball directly via the webform: https://cran.r-project.org/submit.html
 
+
+
+# # Reverse dependencies
+# tools::dependsOnPkgs("sparseIndexTracking")
+# tools::package_dependencies("sparseIndexTracking", reverse = TRUE)
+# devtools::revdep_check()
+# devtools::package_deps("sparseIndexTracking")
+
