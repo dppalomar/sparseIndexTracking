@@ -4,8 +4,8 @@
 \alias{spIndexTrack}
 \title{Sparse Index Tracking}
 \usage{
-spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete", "hdr"),
-  hub = NULL, w0 = NULL, thres = 1e-09)
+spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete",
+  "hdr"), hub = NULL, w0 = NULL, thres = 1e-09)
 }
 \arguments{
 \item{X}{m-by-n matrix of net returns (m samples, n assets).}
