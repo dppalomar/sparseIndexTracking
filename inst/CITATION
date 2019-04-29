@@ -31,7 +31,7 @@ citEntry(entry = "Manual",
 
          textVersion  =
            paste("K. Benidis and D. P. Palomar (2018).",
-                 "sparseIndexTracking: Design of Portfolio of Stocks to Tracks an Index.",
+                 "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index.",
                  "R package version 0.1.0.",
                  "https://CRAN.R-project.org/package=sparseIndexTracking")
 )
