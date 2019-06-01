@@ -42,10 +42,9 @@ rcmdcheck::rcmdcheck()
 devtools::build()
 #devtools::revdep(pkg = "sparseIndexTracking")  # to check reverse dependencies
 #devtools::build_win()  #to check under windows
-#R CMD build .  # this is to generate tarball
-#R CMD build . --compact-vignettes=gs+qpdf
+#R CMD build . --compact-vignettes=gs+qpdf  # this is to generate tarball
 #R CMD check sparseIndexTracking_0.1.1.tar.gz --as-cran  # this is before submission to CRAN
-#R CMD install riskParityPortfolio_0.1.2.9000.tar.gz
+#R CMD install sparseIndexTracking_0.1.1.9000.tar.gz
 #submit the tarball directly via the webform: https://cran.r-project.org/submit.html
 
 

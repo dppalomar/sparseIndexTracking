@@ -23,7 +23,10 @@ csl: ieee.csl
 bibliography: refs.bib
 vignette: >
   %\VignetteIndexEntry{Design of Portfolio of Stocks to Track an Index}
-  %\VignetteKeyword{sparse, portfolio, financial index, tracking}
+  %\VignetteKeyword{sparse}
+  %\VignetteKeyword{portfolio}
+  %\VignetteKeyword{financial index}
+  %\VignetteKeyword{tracking}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
