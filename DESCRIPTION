@@ -1,6 +1,7 @@
 Package: sparseIndexTracking
 Title: Design of Portfolio of Stocks to Track an Index
-Version: 0.1.0.9000
+Version: 0.1.1
+Date: 2019-06-01
 Description: Computation of sparse portfolios for financial index tracking, i.e., joint
     selection of a subset of the assets that compose the index and computation
     of their relative weights (capital allocation). The level of sparsity of the
@@ -18,22 +19,25 @@ Authors@R: c(
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
   )
 Maintainer: Daniel P. Palomar <daniel.p.palomar@gmail.com>
-URL: https://github.com/dppalomar/sparseIndexTracking,
-    https://www.danielppalomar.com,
-    https://doi.org/10.1109/TSP.2017.2762286
+URL: https://CRAN.R-project.org/package=sparseIndexTracking,
+     https://github.com/dppalomar/sparseIndexTracking,
+     https://www.danielppalomar.com,
+     https://doi.org/10.1109/TSP.2017.2762286
 BugReports: https://github.com/dppalomar/sparseIndexTracking/issues
 Depends:
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests:
     bookdown,
     knitr,
     prettydoc,
     rmarkdown,
+    R.rsp,
     xts
 VignetteBuilder:
     knitr,
-    rmarkdown
+    rmarkdown,
+    R.rsp

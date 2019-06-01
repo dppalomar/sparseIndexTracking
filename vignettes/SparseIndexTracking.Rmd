@@ -22,7 +22,7 @@ indent: yes
 csl: ieee.csl
 bibliography: refs.bib
 vignette: >
-  %\VignetteIndexEntry{Design of portfolio of stocks to track an index}
+  %\VignetteIndexEntry{Design of Portfolio of Stocks to Track an Index}
   %\VignetteKeyword{sparse, portfolio, financial index, tracking}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
@@ -36,14 +36,15 @@ opts_chunk$set(
   fig.align = "center",
   fig.retina = 2,
   out.width = "75%",
-  dpi = 96
+  dpi = 96,
+  pngquant = "--speed=1"
 )
 knit_hooks$set(pngquant = hook_pngquant)
 #Help on bookdown: https://bookdown.org/yihui/bookdown/
-#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "all")
-#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::html_document2")
-#rmarkdown::render("vignettes/SparseIndexTracking-vignette.Rmd", "bookdown::pdf_document2")
-#tools::compactPDF("vignettes/SparseIndexTracking-vignette.pdf", gs_quality = "ebook")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "all")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::html_document2")
+#rmarkdown::render("vignettes/SparseIndexTracking.Rmd", "bookdown::pdf_document2")
+#tools::compactPDF("vignettes/SparseIndexTracking.pdf", gs_quality = "ebook")
 ```
 
 -----------

@@ -20,6 +20,7 @@ package?sparseIndexTracking
 ##
 devtools::load_all()  #or Ctrl-Shift-L
 devtools::install()
+#devtools::install(build_vignettes = TRUE)
 library(sparseIndexTracking)
 
 # Documentation
@@ -29,7 +30,6 @@ devtools::document()  # to generate all documentation via roxygen
 
 
 # Code tests
-#devtools::use_testthat()  # the first time
 devtools::test()
 #covr::package_coverage()  # coverage of tests
 #goodpractice::gp()  # overall checks
@@ -40,17 +40,20 @@ devtools::test()
 devtools::check()
 rcmdcheck::rcmdcheck()
 devtools::build()
+#devtools::revdep(pkg = "sparseIndexTracking")  # to check reverse dependencies
 #devtools::build_win()  #to check under windows
 #R CMD build .  # this is to generate tarball
 #R CMD build . --compact-vignettes=gs+qpdf
-#R CMD check sparseIndexTracking_0.1.0.tar.gz --as-cran  # this is before submission to CRAN
+#R CMD check sparseIndexTracking_0.1.1.tar.gz --as-cran  # this is before submission to CRAN
+#R CMD install riskParityPortfolio_0.1.2.9000.tar.gz
 #submit the tarball directly via the webform: https://cran.r-project.org/submit.html
 
 
 
-# # Reverse dependencies
+## Reverse dependencies
 # tools::dependsOnPkgs("sparseIndexTracking")
 # tools::package_dependencies("sparseIndexTracking", reverse = TRUE)
+# devtools::revdep(pkg = "sparseIndexTracking")
 # devtools::revdep_check()
-# devtools::package_deps("sparseIndexTracking")
+# remotes::package_deps("sparseIndexTracking")
 
