@@ -22,13 +22,14 @@ detailed documentation and comparison, with several illustrative examples.
 \section{Help}{
 
 For a quick help see the README file:
-\href{https://rawgit.com/dppalomar/sparseIndexTracking/master/README.html}{GitHub-README} and
-\href{https://cran.r-project.org/web/packages/sparseIndexTracking/README.html}{CRAN-README}.
+\href{https://CRAN.R-project.org/package=sparseIndexTracking/readme/README.html}{CRAN-README} and
+\href{https://github.com/dppalomar/sparseIndexTracking/blob/master/README.md}{GitHub-README}.
 
 For more details see the vignette:
-\href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.html}{GitHub-html-vignette},
-\href{https://rawgit.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking-vignette.pdf}{GitHub-pdf-vignette}, and
-\href{https://cran.r-project.org/web/packages/sparseIndexTracking/vignettes/SparseIndexTracking-vignette.pdf}{CRAN-pdf-vignette}.
+\href{https://CRAN.R-project.org/package=sparseIndexTracking/vignettes/SparseIndexTracking.html}{CRAN-html-vignette},
+\href{https://CRAN.R-project.org/package=sparseIndexTracking/vignettes/SparseIndexTracking-pdf.pdf}{CRAN-pdf-vignette},
+\href{https://raw.githack.com/dppalomar/sparseIndexTracking/master/vignettes/SparseIndexTracking.html}{GitHub-html-vignette}, and
+\href{https://docs.google.com/viewer?url=https://github.com/dppalomar/sparseIndexTracking/raw/master/vignettes/SparseIndexTracking-pdf.pdf}{GitHub-pdf-vignette}.
 }
 
 \references{

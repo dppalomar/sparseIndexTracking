@@ -1,5 +1,20 @@
 citHeader("To cite 'sparseIndexTracking' in publications, please use:")
 
+citEntry(entry = "Manual",
+         title        = "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index",
+         author       = personList(as.person("K. Benidis"),
+                                   as.person("D. P. Palomar")),
+         note         = "R package version 0.1.1",
+         year         = "2019",
+         url          = "https://CRAN.R-project.org/package=sparseIndexTracking",
+
+         textVersion  =
+           paste("K. Benidis and D. P. Palomar (2019).",
+                 "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index.",
+                 "R package version 0.1.1.",
+                 "https://CRAN.R-project.org/package=sparseIndexTracking")
+)
+
 citEntry(entry = "Article",
          title        = "Sparse Portfolios for High-Dimensional
     Financial Index Tracking",
@@ -11,27 +26,12 @@ citEntry(entry = "Article",
          number       = "1",
          pages        = "155--170",
          year         = "2018",
-         url          = "http://www.danielppalomar.com/publications.html",
-
+         url          = "https://doi.org/10.1109/TSP.2017.2762286",
          textVersion  =
            paste("K. Benidis, Y. Feng, and D. P. Palomar,",
                  "\"Sparse Portfolios for High-Dimensional
     Financial Index Tracking,\"",
                  "IEEE Transactions on Signal Processing,",
-                 "vol. 66, no. 1, pp. 155-170, Jan. 2018.")
-)
-
-citEntry(entry = "Manual",
-         title        = "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index",
-         author       = personList(as.person("K. Benidis"),
-                                   as.person("D. P. Palomar")),
-         note         = "R package version 0.1.0",
-         year         = "2018",
-         url          = "https://CRAN.R-project.org/package=sparseIndexTracking",
-
-         textVersion  =
-           paste("K. Benidis and D. P. Palomar (2018).",
-                 "sparseIndexTracking: Design of Portfolio of Stocks to Track an Index.",
-                 "R package version 0.1.0.",
-                 "https://CRAN.R-project.org/package=sparseIndexTracking")
+                 "vol. 66, no. 1, pp. 155-170, Jan. 2018.",
+                 "https://doi.org/10.1109/TSP.2017.2762286")
 )
