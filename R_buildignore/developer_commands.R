@@ -44,7 +44,7 @@ devtools::build()
 #devtools::build_win()  #to check under windows
 #R CMD build . --compact-vignettes=gs+qpdf  # this is to generate tarball
 #R CMD check sparseIndexTracking_0.1.1.tar.gz --as-cran  # this is before submission to CRAN
-#R CMD install sparseIndexTracking_0.1.1.9000.tar.gz
+#R CMD install sparseIndexTracking_0.1.1.tar.gz
 #submit the tarball directly via the webform: https://cran.r-project.org/submit.html
 
 
