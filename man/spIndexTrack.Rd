@@ -4,8 +4,18 @@
 \alias{spIndexTrack}
 \title{Sparse Index Tracking}
 \usage{
-spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete",
-  "hdr"), hub = NULL, w0 = NULL, thres = 1e-09)
+spIndexTrack(
+  X,
+  r,
+  lambda,
+  u = 1,
+  measure = c("ete", "dr", "hete", "hdr"),
+  hub = NULL,
+  w0 = NULL,
+  p_neg_exp = 7,
+  max_iter = 1000,
+  thres = 1e-09
+)
 }
 \arguments{
 \item{X}{m-by-n matrix of net returns (m samples, n assets).}
@@ -22,6 +32,10 @@ spIndexTrack(X, r, lambda, u = 1, measure = c("ete", "dr", "hete",
 \item{hub}{Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.}
 
 \item{w0}{initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.}
+
+\item{p_neg_exp}{final negative exponent of p, so \code{p = exp(-p_neg_exp)} (default is \code{7}).}
+
+\item{max_iter}{maximum number of iterations (default is \code{1000}).}
 
 \item{thres}{threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.}
 }
