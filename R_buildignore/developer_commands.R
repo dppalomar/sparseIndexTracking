@@ -27,7 +27,7 @@ library(sparseIndexTracking)
 devtools::document()  # to generate all documentation via roxygen
 ?spIndexTrack
 ?INDEX_2010
-
+#tools::showNonASCIIfile("R/spIndexTrack.R")
 
 # Code tests
 devtools::test()
