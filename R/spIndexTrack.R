@@ -10,6 +10,8 @@
 #' \code{'hete'} (Huber empirical tracking error), and \code{'hdr'} (Huber downside risk).
 #' @param hub Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.
 #' @param w0 initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
+#' @param p_neg_exp final negative exponent of p, so \code{p = exp(-p_neg_exp)} (default is \code{7}).
+#' @param max_iter maximum number of iterations (default is \code{1000}).
 #' @param thres threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.
 #' @return An n-dimensional vector with allocation weights on the assets.
 #' @author Konstantinos Benidis and Daniel P. Palomar
@@ -32,9 +34,9 @@
 #' @export
 spIndexTrack <- function(X, r, lambda, u = 1,
                          measure = c('ete', 'dr', 'hete', 'hdr'),
-                         hub = NULL, w0 = NULL, thres = 1e-9) {
+                         hub = NULL, w0 = NULL,
+                         p_neg_exp = 7, max_iter = 1000, thres = 1e-9) {
   measure <- match.arg(measure)
-  max_iter <- 1000 # maximum MM iterations
 
   ######## error control  #########
   X <- as.matrix(X)
@@ -42,14 +44,14 @@ spIndexTrack <- function(X, r, lambda, u = 1,
   m <- nrow(X)
   if (n == 1) stop("Data is univariate!")
   if (anyNA(X) || anyNA(r) || anyNA(lambda) || anyNA(u)) stop("This function cannot handle NAs.")
-  if (((measure == 'hete') || (measure == 'hdr')) && ((is.null(hub)) || (hub <= 0))) stop("The input argument 'hub' should be positive.")
+  if ((measure %in% c('hete', 'hdr')) && ((is.null(hub)) || (hub <= 0))) stop("The input argument 'hub' should be positive.")
   if (u <= 0) stop("The input argument 'u' should be positive.")
   #################################
 
   if (is.null(w0))
     w0 <- rep(1/n, n)
   else
-    if (anyNA(w0)) stop("This function cannot handle NAs.")
+    if (anyNA(w0)) stop("Initial point w0 should not have NAs.")
 
   # Preallocation
   F_v <- matrix(0, max_iter, 1)  # objective value
@@ -57,7 +59,7 @@ spIndexTrack <- function(X, r, lambda, u = 1,
   # Decreasing p
   K <- 10  # number of outer iterations
   p1 <- 1  # first value of -log(p)
-  pk <- 7  # last value of -log(p)
+  pk <- p_neg_exp  # last value of -log(p)
   gamma <- (pk/p1)^(1/K)
   pp <- p1 * gamma^(0:K)
   pp <- 10^(-pp)
